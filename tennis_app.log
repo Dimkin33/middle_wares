@@ -384,3 +384,151 @@
 [2025-05-15 20:31:43] DEBUG    service     : Display names: Dmitry vs Tikhon
 [2025-05-15 20:31:43] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['30', '40']}
 [2025-05-15 20:31:43] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['30', '40']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:58:19] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 20:58:25] INFO     router      : route_request: GET /
+[2025-05-15 20:58:25] DEBUG    router      : Matched route: GET /
+[2025-05-15 20:58:25] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 20:58:25] DEBUG    app         : route: {'template': 'index.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:58:27] INFO     router      : route_request: GET /new-match
+[2025-05-15 20:58:27] DEBUG    router      : Matched route: GET /new-match
+[2025-05-15 20:58:27] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 20:58:27] DEBUG    app         : route: {'template': 'new-match.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:58:31] INFO     router      : route_request: POST /new-match
+[2025-05-15 20:58:31] DEBUG    router      : Matched route: POST /new-match
+[2025-05-15 20:58:31] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 20:58:31] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 20:58:31] DEBUG    service     : Creating new match: Dmitry vs Tikhon
+[2025-05-15 20:58:31] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 20:58:31] DEBUG    repository  : Match created with ID: 58259d00-8ee7-4337-9236-2076141eefad
+[2025-05-15 20:58:31] INFO     service     : New match created with UUID: 58259d00-8ee7-4337-9236-2076141eefad
+[2025-05-15 20:58:31] DEBUG    service     : Preparing match view data
+[2025-05-15 20:58:31] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:31] DEBUG    service     : Display names: Dmitry vs Tikhon
+[2025-05-15 20:58:31] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 20:58:31] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:58:32] INFO     router      : route_request: POST /match-score
+[2025-05-15 20:58:32] DEBUG    router      : Matched route: POST /match-score
+[2025-05-15 20:58:32] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 20:58:32] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:32] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:32] DEBUG    service     : Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 20:58:32] DEBUG    service     : Player player1 scores: 0 -> 15
+[2025-05-15 20:58:32] DEBUG    service     : Preparing match view data
+[2025-05-15 20:58:32] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:32] DEBUG    service     : Display names: Dmitry vs Tikhon
+[2025-05-15 20:58:32] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 20:58:32] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:58:33] INFO     router      : route_request: POST /match-score
+[2025-05-15 20:58:33] DEBUG    router      : Matched route: POST /match-score
+[2025-05-15 20:58:33] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 20:58:33] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:33] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:33] DEBUG    service     : Updating regular score: player player1 has 15 points, opponent has 0 points
+[2025-05-15 20:58:33] DEBUG    service     : Player player1 scores: 15 -> 30
+[2025-05-15 20:58:33] DEBUG    service     : Preparing match view data
+[2025-05-15 20:58:33] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:58:33] DEBUG    service     : Display names: Dmitry vs Tikhon
+[2025-05-15 20:58:33] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['30', '0']}
+[2025-05-15 20:58:33] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['30', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:59:49] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 20:59:52] INFO     router      : route_request: GET /
+[2025-05-15 20:59:52] DEBUG    router      : Matched route: GET /
+[2025-05-15 20:59:52] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 20:59:52] DEBUG    app         : route: {'template': 'index.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:59:54] INFO     router      : route_request: GET /new-match
+[2025-05-15 20:59:54] DEBUG    router      : Matched route: GET /new-match
+[2025-05-15 20:59:54] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 20:59:54] DEBUG    app         : route: {'template': 'new-match.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 20:59:58] INFO     router      : route_request: POST /new-match
+[2025-05-15 20:59:58] DEBUG    router      : Matched route: POST /new-match
+[2025-05-15 20:59:58] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 20:59:58] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 20:59:58] DEBUG    service     : Creating new match: Dmitry vs Tikhon
+[2025-05-15 20:59:58] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 20:59:58] DEBUG    repository  : Match created with ID: 36194fdc-1ece-401c-843d-a2c91cdd56fb
+[2025-05-15 20:59:58] INFO     service     : New match created with UUID: 36194fdc-1ece-401c-843d-a2c91cdd56fb
+[2025-05-15 20:59:58] DEBUG    service     : Preparing match view data
+[2025-05-15 20:59:58] DEBUG    repository  : Getting current match: found
+[2025-05-15 20:59:58] DEBUG    service     : Display names: Dmitry vs Tikhon
+[2025-05-15 20:59:58] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 20:59:58] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:00:00] INFO     router      : route_request: POST /match-score
+[2025-05-15 21:00:00] DEBUG    router      : Matched route: POST /match-score
+[2025-05-15 21:00:00] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:00:00] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:00:00] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:00:00] DEBUG    service     : Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 21:00:00] DEBUG    service     : Player player1 scores: 0 -> 15
+[2025-05-15 21:00:00] DEBUG    service     : Preparing match view data
+[2025-05-15 21:00:00] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:00:00] DEBUG    service     : Display names: Dmitry vs Tikhon
+[2025-05-15 21:00:00] DEBUG    service     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 21:00:00] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:08:19] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 21:08:22] INFO     router      : route_request: GET /
+[2025-05-15 21:08:22] DEBUG    router      : Matched route: GET /
+[2025-05-15 21:08:22] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 21:08:22] DEBUG    app         : route: {'template': 'index.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:08:26] INFO     router      : route_request: GET /new-match
+[2025-05-15 21:08:26] DEBUG    router      : Matched route: GET /new-match
+[2025-05-15 21:08:26] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 21:08:26] DEBUG    app         : route: {'template': 'new-match.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:08:31] INFO     router      : route_request: POST /new-match
+[2025-05-15 21:08:31] DEBUG    router      : Matched route: POST /new-match
+[2025-05-15 21:08:31] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:08:31] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 21:08:31] DEBUG    service     : Creating new match: Dmitry vs Tikhon
+[2025-05-15 21:08:31] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 21:08:31] DEBUG    repository  : Match created with ID: 146282a9-eb7f-4f4f-875d-aa2052fe9ae7
+[2025-05-15 21:08:31] INFO     service     : New match created with UUID: 146282a9-eb7f-4f4f-875d-aa2052fe9ae7
+[2025-05-15 21:08:31] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:08:31] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:08:31] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:08:31] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 21:08:31] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:09:17] INFO     router      : route_request: POST /match-score
+[2025-05-15 21:09:17] DEBUG    router      : Matched route: POST /match-score
+[2025-05-15 21:09:17] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:09:17] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:09:17] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:09:17] DEBUG    service.score: Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 21:09:17] DEBUG    service.score: Player player1 scores: 0 -> 15
+[2025-05-15 21:09:17] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:09:17] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:09:17] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:09:17] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 21:09:17] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:11:39] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 21:11:42] INFO     router      : route_request: GET /
+[2025-05-15 21:11:42] DEBUG    router      : Matched route: GET /
+[2025-05-15 21:11:42] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 21:11:42] DEBUG    app         : route: {'template': 'index.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:11:44] INFO     router      : route_request: GET /new-match
+[2025-05-15 21:11:44] DEBUG    router      : Matched route: GET /new-match
+[2025-05-15 21:11:44] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 21:11:44] DEBUG    app         : route: {'template': 'new-match.html', 'context': {}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:11:48] INFO     router      : route_request: POST /new-match
+[2025-05-15 21:11:48] DEBUG    router      : Matched route: POST /new-match
+[2025-05-15 21:11:48] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:11:48] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 21:11:48] DEBUG    service     : Creating new match: Dmitry vs Tikhon
+[2025-05-15 21:11:48] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 21:11:48] DEBUG    repository  : Match created with ID: 887c5f16-00fa-43cc-9b4f-32552808597d
+[2025-05-15 21:11:48] INFO     service     : New match created with UUID: 887c5f16-00fa-43cc-9b4f-32552808597d
+[2025-05-15 21:11:48] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:11:48] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:11:48] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:11:48] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 21:11:48] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:11:50] INFO     router      : route_request: POST /match-score
+[2025-05-15 21:11:50] DEBUG    router      : Matched route: POST /match-score
+[2025-05-15 21:11:50] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:11:50] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:11:50] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:11:50] DEBUG    service.score: Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 21:11:50] DEBUG    service.score: Player player1 scores: 0 -> 15
+[2025-05-15 21:11:50] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:11:50] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:11:50] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:11:50] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 21:11:50] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
