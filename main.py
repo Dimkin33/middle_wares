@@ -12,7 +12,7 @@ from src.tennis_score.app import app
 # Настройка корневого логгера
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(asctime)s] %(levelname)-8s %(name)-21s: %(message)s',
+    format='[%(asctime)s] %(levelname)-8s %(name)-2s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
     handlers=[
         logging.StreamHandler(sys.stdout),  # Вывод в консоль
@@ -29,9 +29,10 @@ for logger_name in ['controller', 'router', 'app']:
 logging.getLogger('wsgi').setLevel(logging.WARNING)  # Только предупреждения и ошибки
 logging.getLogger('waitress').setLevel(logging.INFO)
 
-# Настроим также логи для сервисных слоев и репозиториев
+# Настроим также логи для сервисных слоев, инфраструктуры и репозиториев
 logging.getLogger('service').setLevel(logging.DEBUG)
 logging.getLogger('repository').setLevel(logging.DEBUG)
+logging.getLogger('infrastructure').setLevel(logging.DEBUG)
 
 serve(app, host='127.0.0.1', port=8080)
 

@@ -8,7 +8,7 @@ from typing import TypeAlias
 from ..middlewares.cors import CORSMiddleware
 from ..middlewares.logging import LoggingMiddleware
 from ..middlewares.static import StaticMiddleware
-from ..router import route_request
+from .router import route_request
 from .template import TemplateRenderer
 
 Headers: TypeAlias = list[tuple[str, str]]

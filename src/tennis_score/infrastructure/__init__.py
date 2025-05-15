@@ -5,11 +5,13 @@
 """
 
 from .app_orchestrator import AppOrchestrator
+from .router import route_request
 from .routing import RoutesHandler
 from .template import TemplateRenderer
 
 __all__ = [
     "AppOrchestrator",
+    "route_request",
     "RoutesHandler",
     "TemplateRenderer",
 ]
