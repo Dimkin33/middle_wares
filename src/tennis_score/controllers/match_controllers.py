@@ -2,8 +2,8 @@
 
 import logging
 
+from ..infrastructure import make_response
 from ..services.match_service import MatchService
-from ..utils import make_response
 
 # Создаем единый экземпляр сервиса для использования во всех контроллерах
 match_service = MatchService()

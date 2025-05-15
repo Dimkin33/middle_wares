@@ -12,7 +12,7 @@ from src.tennis_score.app import app
 # Настройка корневого логгера
 logging.basicConfig(
     level=logging.DEBUG,
-    format='[%(asctime)s] %(levelname)-8s %(name)-2s: %(message)s',
+    format='[%(asctime)s] %(levelname)-8s %(name)-25s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
     handlers=[
         logging.StreamHandler(sys.stdout),  # Вывод в консоль

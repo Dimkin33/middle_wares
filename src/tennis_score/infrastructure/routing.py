@@ -3,7 +3,7 @@
 import logging
 from urllib.parse import parse_qs
 
-from ..utils import make_response
+from .response import make_response
 
 
 class RoutesHandler:

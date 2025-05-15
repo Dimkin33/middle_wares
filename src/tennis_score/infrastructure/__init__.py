@@ -5,12 +5,14 @@
 """
 
 from .app_orchestrator import AppOrchestrator
+from .response import make_response
 from .router import route_request
 from .routing import RoutesHandler
 from .template import TemplateRenderer
 
 __all__ = [
     "AppOrchestrator",
+    "make_response",
     "route_request",
     "RoutesHandler",
     "TemplateRenderer",
