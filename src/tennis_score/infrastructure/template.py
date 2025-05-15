@@ -1,5 +1,4 @@
-# filepath: c:\Users\dimki\Project\middle_wares\src\tennis_score\services\template_renderer.py
-"""Сервис для рендеринга шаблонов."""
+"""Сервисы для рендеринга шаблонов."""
 
 import logging
 import os
@@ -16,7 +15,7 @@ class TemplateRenderer:
         Args:
             templates_dir: директория с шаблонами. Если None, используется ../templates
         """
-        self.logger = logging.getLogger("service.template")
+        self.logger = logging.getLogger("infrastructure.template")
         
         if templates_dir is None:
             # Определяем путь к шаблонам относительно текущего файла

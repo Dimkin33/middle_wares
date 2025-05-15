@@ -1,4 +1,4 @@
-"""Оркестратор приложения для теннисного скоринга."""
+"""Оркестратор WSGI-приложения для теннисного скоринга."""
 
 import logging
 import os
@@ -9,7 +9,7 @@ from ..middlewares.cors import CORSMiddleware
 from ..middlewares.logging import LoggingMiddleware
 from ..middlewares.static import StaticMiddleware
 from ..router import route_request
-from .template_renderer import TemplateRenderer
+from .template import TemplateRenderer
 
 Headers: TypeAlias = list[tuple[str, str]]
 
@@ -18,7 +18,7 @@ class AppOrchestrator:
 
     def __init__(self):
         """Инициализирует объект класса."""
-        self.logger = logging.getLogger("service.app")
+        self.logger = logging.getLogger("infrastructure.app")
         
         # Определяем базовую директорию приложения
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
