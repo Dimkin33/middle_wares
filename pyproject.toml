@@ -1,0 +1,71 @@
+[project]
+name = "middle-wares"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "Dmitry", email = "dimkin3@gmail.com" }
+]
+dependencies = [
+    "waitress>=3.0.2",
+    "jinja2>=3.1.6",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "ruff>=0.11.9",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/middle_wares"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+# Выбираем нужные проверки
+# E - pycodestyle errors
+# F - pyflakes
+# I - isort
+# D - docstrings
+# UP - python upgrades
+# B - flake8-bugbear
+# C4 - comprehensions
+# N - naming
+# SIM - simplifications
+# T20 - print statements
+select = ["E", "F", "I", "D", "UP", "B", "C4", "N", "SIM", "T20"]
+
+# Игнорируем некоторые правила
+# D203 - one blank line before class docstring
+# D213 - multi-line docstring should start on second line
+# D102 - missing docstring in public method
+# D107 - missing docstring in __init__
+ignore = ["D203", "D213", "D102", "D107"]
+
+# Исключаем файлы из проверки
+exclude = [
+    ".git",
+    "__pycache__",
+    "*.pyc",
+    "venv",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "D104"]  # Не проверять на импорты в __init__.py
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"  # Использовать стиль документации Google
+
+[tool.ruff.lint.isort]
+known-first-party = ["tennis_score"]
