@@ -532,3 +532,202 @@
 [2025-05-15 21:11:50] DEBUG    service.view: Display names: Dmitry vs Tikhon
 [2025-05-15 21:11:50] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
 [2025-05-15 21:11:50] DEBUG    app         : route: {'template': 'match-score.html', 'context': {'score': {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}, 'player_one_name': 'Dmitry', 'player_two_name': 'Tikhon'}, 'status': '200 OK', 'headers': [('Content-Type', 'text/html; charset=utf-8')]}
+[2025-05-15 21:35:57] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 21:36:00] INFO     service.app : Request: GET /
+[2025-05-15 21:36:00] DEBUG    router      : Routing request: GET /
+[2025-05-15 21:36:00] INFO     service.routes: route_request: GET /
+[2025-05-15 21:36:00] DEBUG    service.routes: Matched route: GET /
+[2025-05-15 21:36:00] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 21:36:00] DEBUG    service.template: Rendering template: index.html
+[2025-05-15 21:36:00] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:36:02] INFO     service.app : Request: GET /new-match
+[2025-05-15 21:36:02] DEBUG    router      : Routing request: GET /new-match
+[2025-05-15 21:36:02] INFO     service.routes: route_request: GET /new-match
+[2025-05-15 21:36:02] DEBUG    service.routes: Matched route: GET /new-match
+[2025-05-15 21:36:02] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 21:36:02] DEBUG    service.template: Rendering template: new-match.html
+[2025-05-15 21:36:02] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:36:09] INFO     service.app : Request: POST /new-match
+[2025-05-15 21:36:09] DEBUG    router      : Routing request: POST /new-match
+[2025-05-15 21:36:09] INFO     service.routes: route_request: POST /new-match
+[2025-05-15 21:36:09] DEBUG    service.routes: Matched route: POST /new-match
+[2025-05-15 21:36:09] DEBUG    service.routes: POST params: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:36:09] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:36:09] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 21:36:09] DEBUG    service.match_data: Creating new match: Dmitry vs Tikhon
+[2025-05-15 21:36:09] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 21:36:09] DEBUG    repository  : Match created with ID: 3bd640c4-db14-438c-95fb-82eb69847176
+[2025-05-15 21:36:09] INFO     service.match_data: New match created with UUID: 3bd640c4-db14-438c-95fb-82eb69847176
+[2025-05-15 21:36:09] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:36:09] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:36:09] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:36:09] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 21:36:09] DEBUG    service.template: Rendering template: match-score.html
+[2025-05-15 21:36:09] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:40:01] INFO     waitress    : Serving on http://127.0.0.1:8080
+[2025-05-15 21:40:04] INFO     service.app : Request: GET /
+[2025-05-15 21:40:04] DEBUG    router      : Routing request: GET /
+[2025-05-15 21:40:04] INFO     service.routes: route_request: GET /
+[2025-05-15 21:40:04] DEBUG    service.routes: Matched route: GET /
+[2025-05-15 21:40:04] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 21:40:04] DEBUG    service.template: Rendering template: index.html
+[2025-05-15 21:40:04] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:40:06] INFO     service.app : Request: GET /new-match
+[2025-05-15 21:40:06] DEBUG    router      : Routing request: GET /new-match
+[2025-05-15 21:40:06] INFO     service.routes: route_request: GET /new-match
+[2025-05-15 21:40:06] DEBUG    service.routes: Matched route: GET /new-match
+[2025-05-15 21:40:06] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 21:40:06] DEBUG    service.template: Rendering template: new-match.html
+[2025-05-15 21:40:06] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:40:11] INFO     service.app : Request: POST /new-match
+[2025-05-15 21:40:11] DEBUG    router      : Routing request: POST /new-match
+[2025-05-15 21:40:11] INFO     service.routes: route_request: POST /new-match
+[2025-05-15 21:40:11] DEBUG    service.routes: Matched route: POST /new-match
+[2025-05-15 21:40:11] DEBUG    service.routes: POST params: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:40:11] DEBUG    controller  : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:40:11] INFO     controller  : New match: Dmitry vs Tikhon
+[2025-05-15 21:40:11] DEBUG    service.match_data: Creating new match: Dmitry vs Tikhon
+[2025-05-15 21:40:11] DEBUG    repository  : Creating match for players: Dmitry, Tikhon
+[2025-05-15 21:40:11] DEBUG    repository  : Match created with ID: 0b9bad4b-cd36-4d84-9ef0-a9a7aa874d78
+[2025-05-15 21:40:11] INFO     service.match_data: New match created with UUID: 0b9bad4b-cd36-4d84-9ef0-a9a7aa874d78
+[2025-05-15 21:40:11] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:40:11] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:40:11] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:40:11] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 21:40:11] DEBUG    service.template: Rendering template: match-score.html
+[2025-05-15 21:40:11] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:40:13] INFO     service.app : Request: POST /match-score
+[2025-05-15 21:40:13] DEBUG    router      : Routing request: POST /match-score
+[2025-05-15 21:40:13] INFO     service.routes: route_request: POST /match-score
+[2025-05-15 21:40:13] DEBUG    service.routes: Matched route: POST /match-score
+[2025-05-15 21:40:13] DEBUG    service.routes: POST params: {'player': ['player1']}
+[2025-05-15 21:40:13] DEBUG    controller  : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:40:13] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:40:13] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:40:13] DEBUG    service.score: Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 21:40:13] DEBUG    service.score: Player player1 scores: 0 -> 15
+[2025-05-15 21:40:13] DEBUG    service.view: Preparing match view data
+[2025-05-15 21:40:13] DEBUG    repository  : Getting current match: found
+[2025-05-15 21:40:13] DEBUG    service.view: Display names: Dmitry vs Tikhon
+[2025-05-15 21:40:13] DEBUG    service.view: Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 21:40:13] DEBUG    service.template: Rendering template: match-score.html
+[2025-05-15 21:40:13] DEBUG    service.app : Response: 200 OK
+[2025-05-15 21:49:10] INFO     waitress       : Serving on http://127.0.0.1:8080
+[2025-05-15 21:49:13] INFO     service.app    : Request: POST /match-score
+[2025-05-15 21:49:13] DEBUG    router         : Routing request: POST /match-score
+[2025-05-15 21:49:13] INFO     service.routes : route_request: POST /match-score
+[2025-05-15 21:49:13] DEBUG    service.routes : Matched route: POST /match-score
+[2025-05-15 21:49:13] DEBUG    service.routes : POST params: {'player': ['player2']}
+[2025-05-15 21:49:13] DEBUG    controller     : match_score_controller: {'player': ['player2']}
+[2025-05-15 21:49:13] DEBUG    repository     : Getting current match: not found
+[2025-05-15 21:49:13] ERROR    controller     : No active match found.
+[2025-05-15 21:49:13] DEBUG    service.template: Rendering template: match-score.html
+[2025-05-15 21:49:13] DEBUG    service.app    : Response: 400 Bad Request
+[2025-05-15 21:49:27] INFO     waitress         : Serving on http://127.0.0.1:8080
+[2025-05-15 21:49:31] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:31] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:31] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:31] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:31] DEBUG    service.routes   : POST params: {'player': ['player1']}
+[2025-05-15 21:49:31] DEBUG    controller       : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:49:31] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:31] ERROR    controller       : No active match found.
+[2025-05-15 21:49:31] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:31] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:33] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:33] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:33] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:33] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:33] DEBUG    service.routes   : POST params: {'player': ['player1']}
+[2025-05-15 21:49:33] DEBUG    controller       : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:49:33] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:33] ERROR    controller       : No active match found.
+[2025-05-15 21:49:33] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:33] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:34] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:34] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:34] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:34] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:34] DEBUG    service.routes   : POST params: {'player': ['player1']}
+[2025-05-15 21:49:34] DEBUG    controller       : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:49:34] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:34] ERROR    controller       : No active match found.
+[2025-05-15 21:49:34] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:34] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:35] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:35] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:35] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:35] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:35] DEBUG    service.routes   : POST params: {'player': ['player1']}
+[2025-05-15 21:49:35] DEBUG    controller       : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:49:35] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:35] ERROR    controller       : No active match found.
+[2025-05-15 21:49:35] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:35] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:37] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:37] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:37] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:37] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:37] DEBUG    service.routes   : POST params: {'player': ['player2']}
+[2025-05-15 21:49:37] DEBUG    controller       : match_score_controller: {'player': ['player2']}
+[2025-05-15 21:49:37] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:37] ERROR    controller       : No active match found.
+[2025-05-15 21:49:37] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:37] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:37] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:37] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:37] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:37] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:37] DEBUG    service.routes   : POST params: {'player': ['player2']}
+[2025-05-15 21:49:37] DEBUG    controller       : match_score_controller: {'player': ['player2']}
+[2025-05-15 21:49:37] DEBUG    repository       : Getting current match: not found
+[2025-05-15 21:49:37] ERROR    controller       : No active match found.
+[2025-05-15 21:49:37] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:37] DEBUG    service.app      : Response: 400 Bad Request
+[2025-05-15 21:49:39] INFO     service.app      : Request: GET /
+[2025-05-15 21:49:39] DEBUG    router           : Routing request: GET /
+[2025-05-15 21:49:39] INFO     service.routes   : route_request: GET /
+[2025-05-15 21:49:39] DEBUG    service.routes   : Matched route: GET /
+[2025-05-15 21:49:39] DEBUG    controller.template: Rendering template: index.html
+[2025-05-15 21:49:39] DEBUG    service.template : Rendering template: index.html
+[2025-05-15 21:49:39] DEBUG    service.app      : Response: 200 OK
+[2025-05-15 21:49:40] INFO     service.app      : Request: GET /new-match
+[2025-05-15 21:49:40] DEBUG    router           : Routing request: GET /new-match
+[2025-05-15 21:49:40] INFO     service.routes   : route_request: GET /new-match
+[2025-05-15 21:49:40] DEBUG    service.routes   : Matched route: GET /new-match
+[2025-05-15 21:49:40] DEBUG    controller.template: Rendering template: new-match.html
+[2025-05-15 21:49:40] DEBUG    service.template : Rendering template: new-match.html
+[2025-05-15 21:49:40] DEBUG    service.app      : Response: 200 OK
+[2025-05-15 21:49:45] INFO     service.app      : Request: POST /new-match
+[2025-05-15 21:49:45] DEBUG    router           : Routing request: POST /new-match
+[2025-05-15 21:49:45] INFO     service.routes   : route_request: POST /new-match
+[2025-05-15 21:49:45] DEBUG    service.routes   : Matched route: POST /new-match
+[2025-05-15 21:49:45] DEBUG    service.routes   : POST params: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:49:45] DEBUG    controller       : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-15 21:49:45] INFO     controller       : New match: Dmitry vs Tikhon
+[2025-05-15 21:49:45] DEBUG    service.match_data: Creating new match: Dmitry vs Tikhon
+[2025-05-15 21:49:45] DEBUG    repository       : Creating match for players: Dmitry, Tikhon
+[2025-05-15 21:49:45] DEBUG    repository       : Match created with ID: db370818-0ad3-4ff6-a9f7-dab75c6f5e5b
+[2025-05-15 21:49:45] INFO     service.match_data: New match created with UUID: db370818-0ad3-4ff6-a9f7-dab75c6f5e5b
+[2025-05-15 21:49:45] DEBUG    service.view     : Preparing match view data
+[2025-05-15 21:49:45] DEBUG    repository       : Getting current match: found
+[2025-05-15 21:49:45] DEBUG    service.view     : Display names: Dmitry vs Tikhon
+[2025-05-15 21:49:45] DEBUG    service.view     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-15 21:49:45] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:45] DEBUG    service.app      : Response: 200 OK
+[2025-05-15 21:49:47] INFO     service.app      : Request: POST /match-score
+[2025-05-15 21:49:47] DEBUG    router           : Routing request: POST /match-score
+[2025-05-15 21:49:47] INFO     service.routes   : route_request: POST /match-score
+[2025-05-15 21:49:47] DEBUG    service.routes   : Matched route: POST /match-score
+[2025-05-15 21:49:47] DEBUG    service.routes   : POST params: {'player': ['player1']}
+[2025-05-15 21:49:47] DEBUG    controller       : match_score_controller: {'player': ['player1']}
+[2025-05-15 21:49:47] DEBUG    repository       : Getting current match: found
+[2025-05-15 21:49:47] DEBUG    repository       : Getting current match: found
+[2025-05-15 21:49:47] DEBUG    service.score    : Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-15 21:49:47] DEBUG    service.score    : Player player1 scores: 0 -> 15
+[2025-05-15 21:49:47] DEBUG    service.view     : Preparing match view data
+[2025-05-15 21:49:47] DEBUG    repository       : Getting current match: found
+[2025-05-15 21:49:47] DEBUG    service.view     : Display names: Dmitry vs Tikhon
+[2025-05-15 21:49:47] DEBUG    service.view     : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-15 21:49:47] DEBUG    service.template : Rendering template: match-score.html
+[2025-05-15 21:49:47] DEBUG    service.app      : Response: 200 OK
