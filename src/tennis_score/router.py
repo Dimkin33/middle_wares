@@ -4,7 +4,7 @@ import logging
 from .controllers.list_controllers import list_matches_controller, reset_match_controller
 from .controllers.match_controllers import match_score_controller, new_match_controller
 from .controllers.view_controllers import TemplateViewController
-from .services.routes_handler import RoutesHandler
+from .infrastructure.routing import RoutesHandler
 
 # Определение маршрутов приложения
 ROUTING_TABLE: dict[tuple[str, str], callable] = {

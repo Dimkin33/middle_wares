@@ -1,4 +1,4 @@
-"""Обработчик маршрутов для приложения теннисного скоринга."""
+"""Компоненты маршрутизации для веб-приложения теннисного скоринга."""
 
 import logging
 from urllib.parse import parse_qs
@@ -7,7 +7,7 @@ from ..utils import make_response
 
 
 class RoutesHandler:
-    """Обработчик маршрутов для управления роутингом запросов."""
+    """Обработчик маршрутов для управления роутингом HTTP запросов."""
 
     def __init__(self, routing_table: dict):
         """Инициализация обработчика маршрутов.
@@ -16,7 +16,7 @@ class RoutesHandler:
             routing_table: словарь маршрутов в формате {(путь, метод): контроллер}
         """
         self.routing_table = routing_table
-        self.logger = logging.getLogger("service.routes")
+        self.logger = logging.getLogger("infrastructure.routing")
 
     def route_request(self, path: str, method: str, environ: dict | None = None) -> dict:
         """Универсальная маршрутизация GET/POST запросов.

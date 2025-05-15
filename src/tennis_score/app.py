@@ -1,4 +1,3 @@
-# filepath: c:\Users\dimki\Project\middle_wares\src\tennis_score\app.py
 """Модуль app.
 
 Входная точка WSGI-приложения для теннисного скоринга.
