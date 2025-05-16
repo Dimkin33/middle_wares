@@ -32,11 +32,11 @@ logging.getLogger('waitress').setLevel(logging.INFO)
 # Настроим также логи для сервисных слоев, инфраструктуры и репозиториев
 logging.getLogger('service').setLevel(logging.DEBUG)
 logging.getLogger('repository').setLevel(logging.DEBUG)
-logging.getLogger('infrastructure').setLevel(logging.DEBUG)
+logging.getLogger('core').setLevel(logging.DEBUG)
 
 # Добавим более детальное логирование для middleware
-logging.getLogger('infrastructure.middleware').setLevel(logging.DEBUG)
-logging.getLogger('infrastructure.middleware.static').setLevel(logging.DEBUG)
+logging.getLogger('core.middleware').setLevel(logging.DEBUG)
+logging.getLogger('core.middleware.static').setLevel(logging.DEBUG)
 
 serve(app, host='127.0.0.1', port=8080)
 

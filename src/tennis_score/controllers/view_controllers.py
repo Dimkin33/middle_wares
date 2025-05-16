@@ -2,7 +2,7 @@
 
 import logging
 
-from ..infrastructure.response import make_response
+from ..core.response import make_response
 
 
 class TemplateViewController:

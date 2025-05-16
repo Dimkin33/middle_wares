@@ -6,7 +6,7 @@
 import logging
 import sys
 
-from .infrastructure.app_orchestrator import AppOrchestrator
+from .core.app_orchestrator import AppOrchestrator
 
 # Настройка логгера при запуске модуля напрямую (не через импорт)
 if __name__ == "__main__":

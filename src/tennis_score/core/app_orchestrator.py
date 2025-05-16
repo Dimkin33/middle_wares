@@ -16,7 +16,7 @@ class AppOrchestrator:
 
     def __init__(self):
         """Инициализирует объект класса."""
-        self.logger = logging.getLogger("infrastructure.app")
+        self.logger = logging.getLogger("core.app")
         
         # Определяем базовую директорию приложения
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,7 +81,7 @@ class AppOrchestrator:
         else:
             self.logger.warning(f"Статическая директория не найдена: {static_dir}")
 
-        # Используем упрощённую StaticMiddleware (новую версию!)
+        # Используем StaticMiddleware 
         app = StaticMiddleware(
             app,
             static_url='/static/',

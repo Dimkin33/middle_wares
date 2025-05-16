@@ -3,7 +3,7 @@
 
 import logging
 
-from ..infrastructure.response import make_response
+from ..core.response import make_response
 from .match_controllers import match_service
 
 

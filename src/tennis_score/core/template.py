@@ -15,7 +15,7 @@ class TemplateRenderer:
         Args:
             templates_dir: директория с шаблонами. Если None, используется ../templates
         """
-        self.logger = logging.getLogger("infrastructure.template")
+        self.logger = logging.getLogger("core.template")
         
         if templates_dir is None:
             # Определяем путь к шаблонам относительно текущего файла
