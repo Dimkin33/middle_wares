@@ -13,6 +13,7 @@ class MatchRepository:
     def __init__(self):
         self.logger = logging.getLogger("repository")
         self.current_match = None
+        self.finished_matches = []  # Список завершённых матчей
         self.logger.debug("MatchRepository initialized")
 
     def create_match(self, player_one_name: str, player_two_name: str) -> Match:
@@ -49,3 +50,8 @@ class MatchRepository:
             return
 
         self.logger.debug("Current match is available for reset")
+
+    def save_finished_match(self, match: Match):
+        """Сохраняет завершённый матч в истории."""
+        self.finished_matches.append(match)
+        self.logger.info(f"Match saved to finished: {match.match_uid}")

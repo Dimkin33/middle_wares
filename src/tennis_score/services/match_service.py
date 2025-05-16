@@ -2,9 +2,9 @@
 
 import logging
 
-from ..dto.match_dto import MatchDTO
 from ..core.presentation import ViewDataHandler
-from ..repositories.match_repository import MatchRepository
+from ..dto.match_dto import MatchDTO
+from ..repositories.orm_repository import OrmMatchRepository
 from .match_data_handler import MatchDataHandler
 from .score_handler import ScoreHandler
 
@@ -13,11 +13,11 @@ class MatchService:
     """Фасад для работы с матчами: координирует обработчики, не реализует бизнес-логику."""
     def __init__(self):
         self.logger = logging.getLogger("service")
-        self.repository = MatchRepository()
+        self.repository = OrmMatchRepository()  # Используем ORM-репозиторий
         self.score_handler = ScoreHandler()
         self.view_handler = ViewDataHandler()
         self.data_handler = MatchDataHandler(self.repository)
-        self.logger.debug("MatchService initialized with repository and handlers")
+        self.logger.debug("MatchService initialized with ORM repository and handlers")
 
     def create_match(self, player_one_name: str, player_two_name: str) -> MatchDTO:
         return self.data_handler.create_match(player_one_name, player_two_name)
@@ -47,6 +47,11 @@ class MatchService:
             # Проверка победителя теперь должна быть в ScoreHandler, но для совместимости:
             if player_score.get("sets", 0) >= 2:
                 match.winner = match.players[player].id
+                # Сохраняем завершённый матч и сбрасываем текущий
+                self.repository.save_finished_match(match)
+                self.repository.current_match = None
+                self.logger.info(f"Match finished and saved: {match.match_uid}")
+                return match.get_match_data()
             self.repository.current_match = match
             return match.get_match_data()
         except Exception as e:
