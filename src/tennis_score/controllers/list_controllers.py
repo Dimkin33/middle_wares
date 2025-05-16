@@ -8,20 +8,13 @@ from .match_controllers import match_service
 
 
 def list_matches_controller(params: dict) -> dict:
-    """Контроллер для отображения списка матчей.
-    
-    Args:
-        params: параметры запроса
-        
-    Returns:
-        dict: ответ для рендеринга шаблона
-    """
+    """Контроллер для отображения списка матчей."""
     logger = logging.getLogger("controller.list")
     logger.debug("Processing list_matches request")
-    
-    # Здесь в будущем может быть логика получения списка матчей из репозитория
-    matches = []  # В будущем здесь будет список матчей
-    
+
+    # Получаем список матчей через сервис (ORM)
+    matches = match_service.data_handler.list_matches()
+    # matches — это список MatchDTO с player1, player2, winner (имена)
     # Возвращаем контекст с данными о всех матчах
     return make_response("matches.html", {"matches": matches})
 

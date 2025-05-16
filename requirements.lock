@@ -10,9 +10,15 @@
 #   universal: false
 
 -e file:.
+greenlet==3.2.2
+    # via sqlalchemy
 jinja2==3.1.6
     # via middle-wares
 markupsafe==3.0.2
     # via jinja2
+sqlalchemy==2.0.41
+    # via middle-wares
+typing-extensions==4.13.2
+    # via sqlalchemy
 waitress==3.0.2
     # via middle-wares
