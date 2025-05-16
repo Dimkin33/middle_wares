@@ -75,7 +75,7 @@ class AppOrchestrator:
         # Проверим существование директории
         if os.path.exists(static_dir):
             self.logger.debug(f"Статическая директория: {static_dir}")
-            for root, dirs, files in os.walk(static_dir):
+            for root, _, files in os.walk(static_dir):
                 rel_root = os.path.relpath(root, static_dir)
                 self.logger.debug(f"  [{rel_root}] → {files}")
         else:
