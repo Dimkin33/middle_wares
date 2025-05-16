@@ -1,4 +1,4 @@
-"""middlewares/cors.py."""
+"""CORS middleware для приложения теннисного скоринга."""
 
 class CORSMiddleware:
     """Класс CORSMiddleware.
@@ -30,17 +30,16 @@ class CORSMiddleware:
             Args:
                 status: Статус HTTP ответа
                 headers: Заголовки HTTP ответа
-                exc_info: Информация об исключении, если есть
+                exc_info: Информация об исключении, если оно произошло
                 
             Returns:
-                Результат выполнения оригинальной функции start_response
+                Результат вызова оригинальной start_response функции
             """
-            headers.append(("Access-Control-Allow-Origin", "*"))
-            headers.append(("Access-Control-Allow-Methods", "GET, POST, OPTIONS"))
-            headers.append(("Access-Control-Allow-Headers", "Content-Type"))
-            return start_response(status, headers, exc_info)
+            cors_headers = [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'),
+                ('Access-Control-Allow-Headers', 'Content-Type, Authorization'),
+            ]
+            return start_response(status, headers + cors_headers, exc_info)
         
-        if environ.get("REQUEST_METHOD", "") == "OPTIONS":
-            custom_start_response("200 OK", [("Content-Length", "0")])
-            return [b""]
         return self.app(environ, custom_start_response)

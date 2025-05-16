@@ -4,16 +4,27 @@
 и техническими аспектами реализации: маршрутизация, шаблоны, WSGI-совместимость и т.д.
 """
 
-from .app_orchestrator import AppOrchestrator
-from .response import make_response
-from .router import route_request
-from .routing import RoutesHandler
+# Важно: импортируем только те компоненты, которые не создадут циклических зависимостей
+from .middleware import CORSMiddleware, LoggingMiddleware, StaticMiddleware
 from .template import TemplateRenderer
 
+# Убираем импорт response.make_response из __init__.py для избежания циклических зависимостей
+# Экспортируем саму функцию для обратной совместимости
 __all__ = [
+    "CORSMiddleware",
+    "LoggingMiddleware",
+    "StaticMiddleware",
+    "TemplateRenderer",
+]
+
+# Следующие импорты могут создавать циклические зависимости, поэтому делаем их
+# доступными, но не загружаем сразу
+from .app_orchestrator import AppOrchestrator
+from .router import route_request
+from .routing import RoutesHandler
+
+__all__ += [
     "AppOrchestrator",
-    "make_response",
     "route_request",
     "RoutesHandler",
-    "TemplateRenderer",
 ]

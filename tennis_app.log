@@ -1089,3 +1089,220 @@
 [2025-05-15 22:29:48] DEBUG    service.view             : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
 [2025-05-15 22:29:48] DEBUG    infrastructure.template  : Rendering template: match-score.html
 [2025-05-15 22:29:48] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-15 22:49:15] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-15 22:49:20] INFO     infrastructure.app       : Request: GET /
+[2025-05-15 22:49:20] DEBUG    router                   : Routing request: GET /
+[2025-05-15 22:49:20] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-15 22:49:20] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-15 22:49:20] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-15 22:49:20] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-15 22:49:20] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-15 22:49:20] INFO     infrastructure.app       : Request: GET /css/style.css
+[2025-05-15 22:49:20] DEBUG    router                   : Routing request: GET /css/style.css
+[2025-05-15 22:49:20] INFO     infrastructure.routing   : route_request: GET /css/style.css
+[2025-05-15 22:49:20] WARNING  infrastructure.routing   : Route not found: GET /css/style.css
+[2025-05-15 22:49:20] DEBUG    infrastructure.app       : Response: 404 Not Found
+[2025-05-15 22:49:20] INFO     infrastructure.app       : Request: GET /js/app.js
+[2025-05-15 22:49:20] DEBUG    router                   : Routing request: GET /js/app.js
+[2025-05-15 22:49:20] INFO     infrastructure.routing   : route_request: GET /js/app.js
+[2025-05-15 22:49:20] WARNING  infrastructure.routing   : Route not found: GET /js/app.js
+[2025-05-15 22:49:20] DEBUG    infrastructure.app       : Response: 404 Not Found
+[2025-05-15 22:49:20] INFO     infrastructure.app       : Request: GET /images/menu.png
+[2025-05-15 22:49:20] DEBUG    router                   : Routing request: GET /images/menu.png
+[2025-05-15 22:49:20] INFO     infrastructure.routing   : route_request: GET /images/menu.png
+[2025-05-15 22:49:20] WARNING  infrastructure.routing   : Route not found: GET /images/menu.png
+[2025-05-15 22:49:20] DEBUG    infrastructure.app       : Response: 404 Not Found
+[2025-05-15 22:57:40] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: статический файл не найден для пути /
+[2025-05-15 22:57:43] INFO     infrastructure.app       : Request: GET /
+[2025-05-15 22:57:43] DEBUG    router                   : Routing request: GET /
+[2025-05-15 22:57:43] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-15 22:57:43] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-15 22:57:43] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-15 22:57:43] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-15 22:57:43] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /css/style.css
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка CSS файла C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\css\style.css
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден CSS файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\css\style.css
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /js/app.js
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка JS файла C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\js\app.js
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден JS файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\js\app.js
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /images/menu.png
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка изображения C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\menu.png
+[2025-05-15 22:57:43] DEBUG    infrastructure.middleware.static: StaticMiddleware: найдено изображение C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\menu.png
+[2025-05-15 22:57:44] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /images/welcome_image.png
+[2025-05-15 22:57:44] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка изображения C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\welcome_image.png
+[2025-05-15 22:57:44] DEBUG    infrastructure.middleware.static: StaticMiddleware: найдено изображение C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\welcome_image.png
+[2025-05-16 09:55:35] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: не найден статический файл для пути /
+[2025-05-16 09:55:42] INFO     infrastructure.app       : Request: GET /
+[2025-05-16 09:55:42] DEBUG    router                   : Routing request: GET /
+[2025-05-16 09:55:42] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-16 09:55:42] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-16 09:55:42] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-16 09:55:42] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-16 09:55:42] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /css/style.css
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\css\style.css
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /js/app.js
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\js\app.js
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /images/menu.png
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\menu.png
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /images/welcome_image.png
+[2025-05-16 09:55:42] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\welcome_image.png
+[2025-05-16 10:10:46] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /new-match
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: статический файл не найден для пути /new-match
+[2025-05-16 10:10:51] INFO     infrastructure.app       : Request: GET /new-match
+[2025-05-16 10:10:51] DEBUG    router                   : Routing request: GET /new-match
+[2025-05-16 10:10:51] INFO     infrastructure.routing   : route_request: GET /new-match
+[2025-05-16 10:10:51] DEBUG    infrastructure.routing   : Matched route: GET /new-match
+[2025-05-16 10:10:51] DEBUG    controller.template      : Rendering template: new-match.html
+[2025-05-16 10:10:51] DEBUG    infrastructure.template  : Rendering template: new-match.html
+[2025-05-16 10:10:51] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /images/racket.png
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка изображения C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\racket.png
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка прямого пути к изображению C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\images\racket.png
+[2025-05-16 10:10:51] DEBUG    infrastructure.middleware.static: StaticMiddleware: статический файл не найден для пути /images/racket.png
+[2025-05-16 10:10:51] INFO     infrastructure.app       : Request: GET /images/racket.png
+[2025-05-16 10:10:51] DEBUG    router                   : Routing request: GET /images/racket.png
+[2025-05-16 10:10:51] INFO     infrastructure.routing   : route_request: GET /images/racket.png
+[2025-05-16 10:10:51] WARNING  infrastructure.routing   : Route not found: GET /images/racket.png
+[2025-05-16 10:10:51] DEBUG    infrastructure.app       : Response: 404 Not Found
+[2025-05-16 10:21:35] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: статический файл не найден для пути /
+[2025-05-16 10:21:38] INFO     infrastructure.app       : Request: GET /
+[2025-05-16 10:21:38] DEBUG    router                   : Routing request: GET /
+[2025-05-16 10:21:38] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-16 10:21:38] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-16 10:21:38] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-16 10:21:38] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-16 10:21:38] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/css/style.css
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: тип ресурса: css, имя файла: style.css
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка static CSS файла C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\css\style.css
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден static CSS файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\css\style.css
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/js/app.js
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: тип ресурса: js, имя файла: app.js
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка static JS файла C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\js\app.js
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: найден static JS файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\js\app.js
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/images/menu.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: тип ресурса: images, имя файла: menu.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка static изображения C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images\menu.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: найдено static изображение C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images\menu.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/images/welcome_image.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: тип ресурса: images, имя файла: welcome_image.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка static изображения C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images\welcome_image.png
+[2025-05-16 10:21:38] DEBUG    infrastructure.middleware.static: StaticMiddleware: найдено static изображение C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images\welcome_image.png
+[2025-05-16 10:24:30] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /new-match
+[2025-05-16 10:24:34] INFO     infrastructure.app       : Request: GET /new-match
+[2025-05-16 10:24:34] DEBUG    router                   : Routing request: GET /new-match
+[2025-05-16 10:24:34] INFO     infrastructure.routing   : route_request: GET /new-match
+[2025-05-16 10:24:34] DEBUG    infrastructure.routing   : Matched route: GET /new-match
+[2025-05-16 10:24:34] DEBUG    controller.template      : Rendering template: new-match.html
+[2025-05-16 10:24:34] DEBUG    infrastructure.template  : Rendering template: new-match.html
+[2025-05-16 10:24:34] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/css/style.css
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: запрошен файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\css/style.css
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/js/app.js
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: запрошен файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\js/app.js
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/images/menu.png
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: запрошен файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images/menu.png
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/images/racket.png
+[2025-05-16 10:24:34] DEBUG    infrastructure.middleware.static: StaticMiddleware: запрошен файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images/racket.png
+[2025-05-16 10:24:44] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /new-match
+[2025-05-16 10:24:44] INFO     infrastructure.app       : Request: POST /new-match
+[2025-05-16 10:24:44] DEBUG    router                   : Routing request: POST /new-match
+[2025-05-16 10:24:44] INFO     infrastructure.routing   : route_request: POST /new-match
+[2025-05-16 10:24:44] DEBUG    infrastructure.routing   : Matched route: POST /new-match
+[2025-05-16 10:24:44] DEBUG    infrastructure.routing   : POST params: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-16 10:24:44] DEBUG    controller               : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-16 10:24:44] INFO     controller               : New match: Dmitry vs Tikhon
+[2025-05-16 10:24:44] DEBUG    service.match_data       : Creating new match: Dmitry vs Tikhon
+[2025-05-16 10:24:44] DEBUG    repository               : Creating match for players: Dmitry, Tikhon
+[2025-05-16 10:24:44] DEBUG    repository               : Match created with ID: 0ea78704-b219-4963-9993-7a4c65490ecf
+[2025-05-16 10:24:44] INFO     service.match_data       : New match created with UUID: 0ea78704-b219-4963-9993-7a4c65490ecf
+[2025-05-16 10:24:44] DEBUG    service.view             : Preparing match view data
+[2025-05-16 10:24:44] DEBUG    repository               : Getting current match: found
+[2025-05-16 10:24:44] DEBUG    service.view             : Display names: Dmitry vs Tikhon
+[2025-05-16 10:24:44] DEBUG    service.view             : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-16 10:24:44] DEBUG    infrastructure.template  : Rendering template: match-score.html
+[2025-05-16 10:24:44] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:24:45] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /static/images/scorekeeper.png
+[2025-05-16 10:24:45] DEBUG    infrastructure.middleware.static: StaticMiddleware: запрошен файл C:\Users\dimki\Project\middle_wares\src\tennis_score\templates\static\images/scorekeeper.png
+[2025-05-16 10:24:47] DEBUG    infrastructure.middleware.static: StaticMiddleware: проверка пути /match-score
+[2025-05-16 10:24:47] INFO     infrastructure.app       : Request: POST /match-score
+[2025-05-16 10:24:47] DEBUG    router                   : Routing request: POST /match-score
+[2025-05-16 10:24:47] INFO     infrastructure.routing   : route_request: POST /match-score
+[2025-05-16 10:24:47] DEBUG    infrastructure.routing   : Matched route: POST /match-score
+[2025-05-16 10:24:47] DEBUG    infrastructure.routing   : POST params: {'player': ['player1']}
+[2025-05-16 10:24:47] DEBUG    controller               : match_score_controller: {'player': ['player1']}
+[2025-05-16 10:24:47] DEBUG    repository               : Getting current match: found
+[2025-05-16 10:24:47] DEBUG    repository               : Getting current match: found
+[2025-05-16 10:24:47] DEBUG    service.score            : Updating regular score: player player1 has 0 points, opponent has 0 points
+[2025-05-16 10:24:47] DEBUG    service.score            : Player player1 scores: 0 -> 15
+[2025-05-16 10:24:47] DEBUG    service.view             : Preparing match view data
+[2025-05-16 10:24:47] DEBUG    repository               : Getting current match: found
+[2025-05-16 10:24:47] DEBUG    service.view             : Display names: Dmitry vs Tikhon
+[2025-05-16 10:24:47] DEBUG    service.view             : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['15', '0']}
+[2025-05-16 10:24:47] DEBUG    infrastructure.template  : Rendering template: match-score.html
+[2025-05-16 10:24:47] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:25:26] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:25:29] INFO     infrastructure.app       : Request: GET /
+[2025-05-16 10:25:29] DEBUG    router                   : Routing request: GET /
+[2025-05-16 10:25:29] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-16 10:25:29] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-16 10:25:29] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-16 10:25:29] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-16 10:25:29] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:25:31] INFO     infrastructure.app       : Request: GET /new-match
+[2025-05-16 10:25:31] DEBUG    router                   : Routing request: GET /new-match
+[2025-05-16 10:25:31] INFO     infrastructure.routing   : route_request: GET /new-match
+[2025-05-16 10:25:31] DEBUG    infrastructure.routing   : Matched route: GET /new-match
+[2025-05-16 10:25:31] DEBUG    controller.template      : Rendering template: new-match.html
+[2025-05-16 10:25:31] DEBUG    infrastructure.template  : Rendering template: new-match.html
+[2025-05-16 10:25:31] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:30:17] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:30:20] INFO     infrastructure.app       : Request: GET /
+[2025-05-16 10:30:20] DEBUG    router                   : Routing request: GET /
+[2025-05-16 10:30:20] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-16 10:30:20] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-16 10:30:20] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-16 10:30:20] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-16 10:30:20] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:30:23] INFO     infrastructure.app       : Request: GET /new-match
+[2025-05-16 10:30:23] DEBUG    router                   : Routing request: GET /new-match
+[2025-05-16 10:30:23] INFO     infrastructure.routing   : route_request: GET /new-match
+[2025-05-16 10:30:23] DEBUG    infrastructure.routing   : Matched route: GET /new-match
+[2025-05-16 10:30:23] DEBUG    controller.template      : Rendering template: new-match.html
+[2025-05-16 10:30:23] DEBUG    infrastructure.template  : Rendering template: new-match.html
+[2025-05-16 10:30:23] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:30:27] INFO     infrastructure.app       : Request: POST /new-match
+[2025-05-16 10:30:27] DEBUG    router                   : Routing request: POST /new-match
+[2025-05-16 10:30:27] INFO     infrastructure.routing   : route_request: POST /new-match
+[2025-05-16 10:30:27] DEBUG    infrastructure.routing   : Matched route: POST /new-match
+[2025-05-16 10:30:27] DEBUG    infrastructure.routing   : POST params: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-16 10:30:27] DEBUG    controller               : new_match_controller: {'playerOne': ['Dmitry'], 'playerTwo': ['Tikhon']}
+[2025-05-16 10:30:27] INFO     controller               : New match: Dmitry vs Tikhon
+[2025-05-16 10:30:27] DEBUG    service.match_data       : Creating new match: Dmitry vs Tikhon
+[2025-05-16 10:30:27] DEBUG    repository               : Creating match for players: Dmitry, Tikhon
+[2025-05-16 10:30:27] DEBUG    repository               : Match created with ID: e9b5069a-3f90-417b-9951-db0bee6c5436
+[2025-05-16 10:30:27] INFO     service.match_data       : New match created with UUID: e9b5069a-3f90-417b-9951-db0bee6c5436
+[2025-05-16 10:30:27] DEBUG    service.view             : Preparing match view data
+[2025-05-16 10:30:27] DEBUG    repository               : Getting current match: found
+[2025-05-16 10:30:27] DEBUG    service.view             : Display names: Dmitry vs Tikhon
+[2025-05-16 10:30:27] DEBUG    service.view             : Parsed score data: {'sets': [0, 0], 'games': [0, 0], 'points': ['0', '0']}
+[2025-05-16 10:30:27] DEBUG    infrastructure.template  : Rendering template: match-score.html
+[2025-05-16 10:30:27] DEBUG    infrastructure.app       : Response: 200 OK
+[2025-05-16 10:36:46] INFO     waitress                 : Serving on http://127.0.0.1:8080
+[2025-05-16 10:36:57] INFO     infrastructure.app       : Request: GET /
+[2025-05-16 10:36:57] DEBUG    router                   : Routing request: GET /
+[2025-05-16 10:36:57] INFO     infrastructure.routing   : route_request: GET /
+[2025-05-16 10:36:57] DEBUG    infrastructure.routing   : Matched route: GET /
+[2025-05-16 10:36:57] DEBUG    controller.template      : Rendering template: index.html
+[2025-05-16 10:36:57] DEBUG    infrastructure.template  : Rendering template: index.html
+[2025-05-16 10:36:57] DEBUG    infrastructure.app       : Response: 200 OK

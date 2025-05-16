@@ -5,9 +5,7 @@ import os
 from collections.abc import Callable, Iterable
 from typing import TypeAlias
 
-from ..middlewares.cors import CORSMiddleware
-from ..middlewares.logging import LoggingMiddleware
-from ..middlewares.static import StaticMiddleware
+from .middleware import CORSMiddleware, LoggingMiddleware, StaticMiddleware
 from .router import route_request
 from .template import TemplateRenderer
 
@@ -68,24 +66,30 @@ class AppOrchestrator:
         return [content]
 
     def create_app(self):
-        """Создает WSGI-приложение с необходимыми middleware.
-        
-        Returns:
-            Callable: WSGI-совместимая функция приложения
-        """
+        """Создает WSGI-приложение с необходимыми middleware."""
         app = self.wsgi_app
-        
-        # Настраиваем статические директории
-        static_dirs: list[str] = [
-            os.path.join(self.templates_dir, "css"),
-            os.path.join(self.templates_dir, "js"),
-            os.path.join(self.templates_dir, "images"),
-        ]
-        
-        # Оборачиваем в миддлвары
-        app = StaticMiddleware(app, static_root="/", static_dirs=static_dirs)
+
+        # Путь к общей директории со статическими файлами
+        static_dir = os.path.join(self.templates_dir, "static")
+
+        # Проверим существование директории
+        if os.path.exists(static_dir):
+            self.logger.debug(f"Статическая директория: {static_dir}")
+            for root, dirs, files in os.walk(static_dir):
+                rel_root = os.path.relpath(root, static_dir)
+                self.logger.debug(f"  [{rel_root}] → {files}")
+        else:
+            self.logger.warning(f"Статическая директория не найдена: {static_dir}")
+
+        # Используем упрощённую StaticMiddleware (новую версию!)
+        app = StaticMiddleware(
+            app,
+            static_url='/static/',
+            static_dir=static_dir
+        )
         app = CORSMiddleware(app)
         app = LoggingMiddleware(app)
-        
-        self.logger.info("Application created with all middleware")
+
+        self.logger.info("WSGI-приложение собрано с middleware")
         return app
+
