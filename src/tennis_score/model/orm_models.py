@@ -11,16 +11,8 @@ class PlayerORM(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
 
-    matches1 = relationship(
-        "MatchORM",
-        back_populates="player1",
-        foreign_keys="MatchORM.player1_id"
-    )
-    matches2 = relationship(
-        "MatchORM",
-        back_populates="player2",
-        foreign_keys="MatchORM.player2_id"
-    )
+    matches1 = relationship("MatchORM", back_populates="player1", foreign_keys="MatchORM.player1_id")
+    matches2 = relationship("MatchORM", back_populates="player2", foreign_keys="MatchORM.player2_id")
 
     def __repr__(self):
         """Строковое представление объекта PlayerORM."""
