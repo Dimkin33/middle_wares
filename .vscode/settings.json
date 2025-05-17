@@ -1,3 +1,6 @@
 {
-    "github.copilot.chat.localeOverride": "ru"
+    "github.copilot.chat.localeOverride": "ru",
+
+    "explorer.excludeGitIgnore":true    
+
 }
