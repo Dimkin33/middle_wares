@@ -40,13 +40,6 @@ def match_score_controller(params: dict) -> dict:
     current_match = match_service.repository.get_current_match()
 
     if not current_match:
-<<<<<<< HEAD
-        # Если нет активного матча, показываем все завершённые матчи из БД
-        matches = match_service.repository.list_matches()
-        if matches:
-            # Показываем таблицу всех матчей (шаблон matches.html)
-            return make_response("matches.html", {"matches": matches})
-=======
         # Если нет активного матча, но есть завершённые — показываем последний завершённый
         finished_matches = match_service.repository.finished_matches
         if finished_matches:
@@ -57,7 +50,6 @@ def match_score_controller(params: dict) -> dict:
             view_data = match_service.prepare_match_view_data(match_dto, p1_name, p2_name)
             view_data["info"] = "Матч завершён. Начните новый матч или посмотрите результаты."
             return make_response("match-score.html", view_data)
->>>>>>> 42d711301e8338dc2544138e238399a10987ea9d
         logger.error("No active match found.")
         return make_response(
             "match-score.html",
@@ -94,8 +86,12 @@ def match_score_controller(params: dict) -> dict:
         )
 
     # Получаем имена игроков из текущего матча
-    p1_name = getattr(current_match, "player_one_name", "")
-    p2_name = getattr(current_match, "player_two_name", "")
+    if current_match:
+        p1_name = getattr(current_match, "player_one_name", "")
+        p2_name = getattr(current_match, "player_two_name", "")
+    else:
+        p1_name = getattr(match_dto, "player1", "")
+        p2_name = getattr(match_dto, "player2", "")
 
     # Получаем данные для отображения
     view_data = match_service.prepare_match_view_data(match_dto, p1_name, p2_name)

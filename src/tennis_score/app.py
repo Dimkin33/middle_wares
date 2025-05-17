@@ -4,20 +4,8 @@
 """
 
 import logging
-import sys
 
 from .core.app_orchestrator import AppOrchestrator
-
-# Настройка логгера при запуске модуля напрямую (не через импорт)
-if __name__ == "__main__":
-    logging.basicConfig(
-        filename="tennis_app.log",
-        level=logging.DEBUG,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    logging.getLogger().addHandler(console_handler)
 
 # Создание и настройка приложения с использованием оркестратора
 app_orchestrator = AppOrchestrator()
