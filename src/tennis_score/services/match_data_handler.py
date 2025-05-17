@@ -22,20 +22,22 @@ class MatchDataHandler:
         """
         self.repository = repository
         self.logger = logging.getLogger("service.match_data")
+        self._current_match_dto = None  # Для хранения текущего матча в памяти
 
     def create_match(self, player_one_name: str, player_two_name: str) -> MatchDTO:
         """Создать новый матч и вернуть DTO."""
         self.logger.debug(f"Creating new match: {player_one_name} vs {player_two_name}")
-        match = self.repository.create_match(player_one_name, player_two_name)
-        # Для ORM-репозитория match — это ORM-объект, преобразуем в DTO через orm_to_dto
-        from ..repositories.orm_repository import orm_to_dto
-        match_dto = orm_to_dto(match)
+        match_dto = self.repository.create_match(player_one_name, player_two_name)
+        self._current_match_dto = match_dto  # Сохраняем текущий матч в памяти
         self.logger.info(f"New match created with UUID: {match_dto.uuid}")
         return match_dto
 
     def get_current_match_data(self) -> MatchDTO | None:
-        """Для ORM-репозитория всегда None (нет текущего матча)."""
-        return None
+        """Вернуть текущий матч из памяти, если есть."""
+        return self._current_match_dto
+
+    def reset_current_match(self):
+        self._current_match_dto = None
 
     def get_match_by_uuid(self, match_uuid: str) -> MatchDTO | None:
         # TODO: реализовать поиск по UUID через ORM

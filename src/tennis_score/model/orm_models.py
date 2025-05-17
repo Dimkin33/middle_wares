@@ -23,6 +23,7 @@ class PlayerORM(Base):
     )
 
     def __repr__(self):
+        """Строковое представление объекта PlayerORM."""
         return f"<PlayerORM(id={self.id}, name='{self.name}')>"
 
 class MatchORM(Base):

@@ -26,7 +26,7 @@ class MatchService:
         return self.data_handler.get_current_match_data()
 
     def update_current_match_score(self, player: str) -> MatchDTO | None:
-        match = self.repository.get_current_match()
+        match = self.repository.current_match
         if not match:
             self.logger.warning("No active match found to update score")
             return None

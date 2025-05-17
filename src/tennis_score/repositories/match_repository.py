@@ -29,17 +29,6 @@ class MatchRepository:
         self.logger.debug(f"Getting current match: {'found' if has_match else 'not found'}")
         return self.current_match
 
-    def update_match_score(self, player: str) -> Match | None:
-        """Возвращает объект матча для обновления счета.
-        Фактическое обновление должно происходить в сервисном слое.
-        """  # noqa: D205
-        if not self.current_match:
-            self.logger.warning("Attempted to update score but no active match found")
-            return None
-
-        self.logger.debug(f"Retrieving match for score update for player: {player}")
-        return self.current_match
-
     def reset_current_match(self) -> None:
         """Проверяет наличие текущего матча для сброса.
         Фактический сброс должен происходить в сервисном слое.

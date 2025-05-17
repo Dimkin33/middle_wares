@@ -10,15 +10,6 @@ from ..dto.player_dto import PlayerDTO
 
 # --- ИМПОРТ ORM-МОДЕЛЕЙ ---
 from ..model.orm_models import Base, MatchORM, PlayerORM
-from ..repositories.orm_repository import (
-    add_match as orm_add_match,
-)
-from ..repositories.orm_repository import (
-    get_or_create_player_by_name as orm_get_or_create_player_by_name,
-)
-from ..repositories.orm_repository import (
-    list_matches_dto as orm_list_matches_dto,
-)
 
 # Настройка логирования
 logger = logging.getLogger("orm")
@@ -110,17 +101,17 @@ def get_player_by_name(name: str) -> PlayerORM | None:
         return session.query(PlayerORM).filter_by(name=name).first()
 
 
-def get_or_create_player_by_name(name: str) -> PlayerORM:
-    """Получить игрока по имени или создать, если не найден."""
+def get_or_create_player_by_name(name: str) -> int:
+    """Получить id игрока по имени или создать, если не найден."""
     with get_session() as session:
         player = session.query(PlayerORM).filter_by(name=name).first()
         if player:
-            return player
+            return player.id
         player = PlayerORM(name=name)
         session.add(player)
         session.flush()  # чтобы получить id
         logger.info(f"Создан новый игрок: {player}")
-        return player
+        return player.id
 
 
 def player_orm_to_dto(player: PlayerORM) -> PlayerDTO:
@@ -128,61 +119,97 @@ def player_orm_to_dto(player: PlayerORM) -> PlayerDTO:
     return PlayerDTO(id=player.id, name=player.name)
 
 
-def orm_to_dto(match: MatchORM) -> MatchDTO:
+def orm_to_dto(match: MatchORM, session=None) -> MatchDTO:
     """Преобразование ORM-объекта матча в DTO с именами игроков."""
-    # Получаем имена игроков
-    player1_name = match.player1.name if match.player1 else None
-    player2_name = match.player2.name if match.player2 else None
-    winner_name = match.winner.name if match.winner else None
-    return MatchDTO(
-        id=match.id,
-        uuid=match.uuid,
-        player1=player1_name,
-        player2=player2_name,
-        winner=winner_name,
-        score=match.score_str,
-    )
-
+    close_session = False
+    if session is None:
+        close_session = True
+        session = Session()
+    try:
+        player1_name = None
+        player2_name = None
+        winner_name = None
+        if match.player1_id:
+            player1 = session.query(PlayerORM).get(match.player1_id)
+            player1_name = player1.name if player1 else None
+        if match.player2_id:
+            player2 = session.query(PlayerORM).get(match.player2_id)
+            player2_name = player2.name if player2 else None
+        if match.winner_id:
+            winner = session.query(PlayerORM).get(match.winner_id)
+            winner_name = winner.name if winner else None
+        return MatchDTO(
+            id=match.id,
+            uuid=match.uuid,
+            player1=player1_name,
+            player2=player2_name,
+            winner=winner_name,
+            score=match.score_str,
+        )
+    finally:
+        if close_session:
+            session.close()
 
 def list_matches_dto() -> list[MatchDTO]:
     """Получение списка матчей в виде DTO."""
     with get_session() as session:
         matches = session.query(MatchORM).all()
-        return [orm_to_dto(m) for m in matches]
+        return [orm_to_dto(m, session) for m in matches]
 
 
 class OrmMatchRepository:
     """Репозиторий для работы с матчами через ORM (SQLite)."""
+    def __init__(self):
+        self.finished_matches = []
+        self._current_match = None  # Для хранения текущего матча в памяти
+        self._current_match_dto = None  # Для хранения текущего матча в памяти
+
     def create_match(self, player_one_name: str, player_two_name: str):
-        # Только создаём объект матча в памяти, не сохраняем в БД
         from ..model.match import Match
         match = Match(player_one_name, player_two_name)
-        return match  # (оставляем, т.к. это для бизнес-логики, не для истории)
+        self._current_match = match  # Сохраняем бизнес-объект, а не только DTO
+        return match.get_match_data()
 
     def save_finished_match(self, match):
-        # Сохраняем завершённый матч в БД и возвращаем DTO
-        player1 = orm_get_or_create_player_by_name(match.player_one_name)
-        player2 = orm_get_or_create_player_by_name(match.player_two_name)
+        # Получаем id игроков через get_or_create_player_by_name (теперь возвращает id)
+        player1_id = get_or_create_player_by_name(match.player_one_name)
+        player2_id = get_or_create_player_by_name(match.player_two_name)
         winner = None
         if match.winner == match.players["player1"].id:
-            winner = player1.id
+            winner = player1_id
         elif match.winner == match.players["player2"].id:
-            winner = player2.id
-        orm_match = orm_add_match(
+            winner = player2_id
+        # Сохраняем матч в БД
+        add_match(
             uuid=match.match_uid,
-            player1_id=player1.id,
-            player2_id=player2.id,
+            player1_id=player1_id,
+            player2_id=player2_id,
             winner_id=winner,
             score=match.get_score_json(),
         )
-        return orm_to_dto(orm_match)
+        # Получаем матч из БД в новой сессии и преобразуем в DTO
+        with get_session() as session:
+            orm_match = session.query(MatchORM).filter_by(uuid=match.match_uid).first()
+            return orm_to_dto(orm_match, session)
 
     def list_matches(self):
         # Возвращаем список DTO
-        return orm_list_matches_dto()
+        return list_matches_dto()
 
     def get_current_match(self):
-        return None
+        return getattr(self, '_current_match', None)
+
+    def reset_current_match(self):
+        self._current_match = None
+        self._current_match_dto = None
+
+    @property
+    def current_match(self):
+        return self._current_match
+
+    @current_match.setter
+    def current_match(self, value):
+        self._current_match = value
 
     def get_match_by_uuid(self, match_uuid: str):
         # TODO: реализовать поиск по UUID через ORM и возвращать DTO
