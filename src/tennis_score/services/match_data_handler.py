@@ -3,6 +3,7 @@
 Не содержит игровой логики (подсчёта очков, определения победителя).
 """
 
+import json
 import logging
 
 from ..dto.match_dto import MatchDTO
@@ -43,6 +44,21 @@ class MatchDataHandler:
         # TODO: реализовать поиск по UUID через ORM
         return None
 
+    def _format_score(self, score_json: str) -> str:
+        """Преобразует JSON-строку счёта в красивый вид (например, 2:0)."""
+        try:
+            score = json.loads(score_json)
+            sets = score.get("sets")
+            if sets and isinstance(sets, list) and len(sets) == 2:
+                return f"{sets[0]}:{sets[1]}"
+        except Exception:
+            pass
+        return "-"
+
     def list_matches(self) -> list[MatchDTO]:
-        """Получить список всех матчей в виде DTO."""
-        return self.repository.list_matches()
+        """Получить список всех матчей в виде DTO с красивым счётом."""
+        matches = self.repository.list_matches()
+        for m in matches:
+            if hasattr(m, 'score'):
+                m.score_str = self._format_score(m.score)
+        return matches
