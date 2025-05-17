@@ -1,0 +1,57 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Scoreboard | Finished Matches</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">    <link rel="stylesheet" href="static/css/style.css">
+
+    <script src="static/js/app.js"></script>
+</head>
+
+<body>
+<header class="header">
+    {% include 'nav.html' %}
+</header>
+<main>
+    <div class="container">
+        <h1>Matches</h1>
+        <div class="input-container">
+            <input class="input-filter" placeholder="Filter by name" type="text" />
+            <div>
+                <a href="#">
+                    <button class="btn-filter">Reset Filter</button>
+                </a>
+            </div>
+        </div>
+
+        <table class="table-matches">
+            <tr>
+                <th>Player One</th>
+                <th>Player Two</th>
+                <th>Winner</th>
+            </tr>
+            {% for match in matches %}
+            <tr>
+                <td>{{ match.player1 }}</td>
+                <td>{{ match.player2 }}</td>
+                <td><span class="winner-name-td">{{ match.winner or '-' }}</span></td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="pagination">
+            <a class="prev" href="#"> < </a>
+            <a class="num-page current" href="#">1</a>
+            <a class="num-page" href="#">2</a>
+            <a class="num-page" href="#">3</a>
+            <a class="next" href="#"> > </a>
+        </div>
+    </div>
+</main>
+<footer>
+    {% include 'footer.html' %}
+</footer>
+</body>
+</html>
