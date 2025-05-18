@@ -10,7 +10,7 @@ from waitress import serve
 from src.tennis_score.app import app
 
 # Настройка корневого логгера
-log_format = '[%(asctime)s] %(levelname)-8s %(name)-25s: %(message)s'
+log_format = '[%(asctime)s] %(levelname)-8s %(name)-25s %(funcName)-25s %(message)s'
 log_datefmt = '%Y-%m-%d %H:%M:%S'
 logging.basicConfig(
     level=logging.DEBUG,
