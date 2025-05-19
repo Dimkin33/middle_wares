@@ -129,7 +129,7 @@ class OrmMatchRepository:
             def get_player_name(player_id: int | None) -> str | None:
                 if not player_id:
                     return None
-                player = session.query(PlayerORM).get(player_id)
+                player = session.get(PlayerORM, player_id)
                 return player.name if player else None
             return MatchDTO(
                 id=match.id,
