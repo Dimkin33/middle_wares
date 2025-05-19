@@ -1,3 +1,4 @@
+"""Репозиторий для работы с матчами и игроками через ORM (SQLite)."""
 import logging
 from contextlib import contextmanager
 
@@ -53,7 +54,7 @@ class OrmMatchRepository:
             logger.info(f"Добавлен игрок: {player}")
             return player
 
-    def add_match(self, uuid: str, player1_id: int, player2_id: int, winner_id: int | None, score: str) -> int:
+    def add_match(self, uuid: str, player1_id: int, player2_id: int, winner_id: int | None, score: str) -> int:  # noqa: E501
         """Добавление матча в БД. Возвращает id созданного матча."""
         if not uuid or not isinstance(uuid, str):
             raise ValueError("UUID матча должен быть непустой строкой")
