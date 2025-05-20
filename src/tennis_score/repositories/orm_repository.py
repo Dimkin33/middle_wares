@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from ..dto.match_dto import MatchDTO
-from ..dto.player_dto import PlayerDTO
 from ..model.match import Match
 from ..model.orm_models import Base, MatchORM, PlayerORM
 
@@ -79,31 +78,21 @@ class OrmMatchRepository:
             logger.info(f"Добавлен матч: {match}")
             return match.id
 
-    def list_matches(self) -> list[MatchDTO]:
-        """Получение списка матчей в виде DTO (для шаблонов и API)."""
+    def list_matches_paginated(self, page: int = 1, per_page: int = 10) -> tuple[list[MatchDTO], int]:
+        import math
+        """Получить список матчей с пагинацией и общее число страниц."""
+        offset = (page - 1) * per_page
         with self._get_session() as session:
-            matches = session.query(MatchORM).all()
-            return [self.orm_to_dto(m) for m in matches]
-
-    # Для обратной совместимости
-    list_matches_dto = list_matches
-
-    def list_players(self) -> list[PlayerORM]:
-        """Получение списка игроков."""
-        with self._get_session() as session:
-            players = session.query(PlayerORM).order_by(PlayerORM.name).all()
-            logger.info(f"Найдено игроков: {len(players)}")
-            return players
-
-    def get_player_by_id(self, player_id: int) -> PlayerORM | None:
-        """Получить игрока по ID."""
-        with self._get_session() as session:
-            return session.query(PlayerORM).filter_by(id=player_id).first()
-
-    def get_player_by_name(self, name: str) -> PlayerORM | None:
-        """Получить игрока по имени."""
-        with self._get_session() as session:
-            return session.query(PlayerORM).filter_by(name=name).first()
+            total_matches = session.query(MatchORM).count()
+            total_pages = math.ceil(total_matches / per_page) if per_page else 1
+            matches = (
+                session.query(MatchORM)
+                .order_by(MatchORM.id.desc())
+                .offset(offset)
+                .limit(per_page)
+                .all()
+            )
+            return [self.orm_to_dto(m) for m in matches], total_pages
 
     def get_or_create_player_by_name(self, name: str) -> int:
         """Получить ID игрока по имени или создать, если не найден."""
@@ -118,10 +107,6 @@ class OrmMatchRepository:
             session.flush()
             logger.info(f"Создан новый игрок: {player}")
             return player.id
-
-    def player_orm_to_dto(self, player: PlayerORM) -> PlayerDTO:
-        """Преобразование ORM-игрока в DTO."""
-        return PlayerDTO(id=player.id, name=player.name)
 
     def orm_to_dto(self, match: MatchORM) -> MatchDTO:
         """Преобразование ORM-объекта матча в DTO с именами игроков."""
@@ -147,20 +132,10 @@ class OrmMatchRepository:
         if player_one_name == player_two_name:
             raise ValueError("Игроки должны быть разными")
 
+        # Удаляем неиспользуемые переменные player1_id, player2_id
         match = Match(player_one_name, player_two_name)
         self._current_match = match
-
-        player1_id = self.get_or_create_player_by_name(player_one_name)
-        player2_id = self.get_or_create_player_by_name(player_two_name)
-
-        return MatchDTO(
-            id=0,
-            uuid=match.match_uid,
-            player1=player1_id,
-            player2=player2_id,
-            winner=None,
-            score=match.get_score_json(),
-        )
+        return match.to_live_dto()
 
     def save_finished_match(self, match: Match) -> MatchDTO:
         """Сохранить завершённый матч в БД и вернуть его DTO."""
@@ -169,6 +144,7 @@ class OrmMatchRepository:
 
         player1_id = self.get_or_create_player_by_name(match.player_one_name)
         player2_id = self.get_or_create_player_by_name(match.player_two_name)
+        match.set_player_ids(player1_id, player2_id)
         winner_id = None
         if match.winner:
             winner_id = player1_id if match.winner == match.players["player1"].id else player2_id
@@ -178,8 +154,9 @@ class OrmMatchRepository:
             player1_id=player1_id,
             player2_id=player2_id,
             winner_id=winner_id,
-            score=match.get_score_json(),
+            score=match.get_final_score_str(),  # только красивая строка счёта
         )
+        logger.info(f"Матч сохранён: {match_id}, {match.match_uid}, {match.player_one_name} vs {match.player_two_name}")  # noqa: E501
         with self._get_session() as session:
             orm_match = session.query(MatchORM).get(match_id)
             return self.orm_to_dto(orm_match)

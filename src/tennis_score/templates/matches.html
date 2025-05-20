@@ -37,7 +37,7 @@
             <tr>
                 <td>{{ match.player1 }}</td>
                 <td>{{ match.player2 }}</td>
-                <td>{{ match.score_str or '-' }}</td>
+                <td>{{ match.score if match.score else '-' }}</td>
                 <td><span class="winner-name-td">{{ match.winner or '-' }}</span></td>
                 
             </tr>
@@ -45,11 +45,23 @@
         </table>
 
         <div class="pagination">
-            <a class="prev" href="#"> < </a>
-            <a class="num-page current" href="#">1</a>
-            <a class="num-page" href="#">2</a>
-            <a class="num-page" href="#">3</a>
-            <a class="next" href="#"> > </a>
+            {% if page > 1 %}
+                <a class="prev" href="?page={{ page - 1 }}"> &lt; </a>
+            {% else %}
+                <span class="prev disabled"> &lt; </span>
+            {% endif %}
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <a class="num-page current" href="?page={{ p }}">{{ p }}</a>
+                {% else %}
+                    <a class="num-page" href="?page={{ p }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page < total_pages %}
+                <a class="next" href="?page={{ page + 1 }}"> &gt; </a>
+            {% else %}
+                <span class="next disabled"> &gt; </span>
+            {% endif %}
         </div>
     </div>
 </main>

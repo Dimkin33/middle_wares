@@ -44,7 +44,7 @@ def match_score_controller(params: dict) -> dict:
         finished_matches = match_service.repository.finished_matches
         if finished_matches:
             last_match = finished_matches[-1]
-            match_dto = last_match.get_match_data()
+            match_dto = last_match.to_final_dto()
             p1_name = getattr(last_match, "player_one_name", "")
             p2_name = getattr(last_match, "player_two_name", "")
             view_data = match_service.prepare_match_view_data(match_dto, p1_name, p2_name)

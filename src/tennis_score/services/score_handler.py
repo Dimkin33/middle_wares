@@ -1,14 +1,24 @@
 """Обработчик игровой логики теннисного матча: только подсчёт очков и правила."""
 
 import logging
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.tennis_score.model.match import Match
 
 
 class ScoreHandler:
     """Логика подсчёта очков, тай-брейков и определения победителя в матче."""
-    def __init__(self):
-        self.logger = logging.getLogger("service.score")
+    def __init__(self) -> None:
+        self.logger: logging.Logger = logging.getLogger("service.score")
 
-    def update_regular_score(self, match, player, player_score, opponent_score):
+    def update_regular_score(
+        self,
+        match: 'Match',
+        player: str,
+        player_score: dict[str, int | bool],
+        opponent_score: dict[str, int | bool],
+    ) -> None:
         """Обновляет счёт в обычной игре (не тай-брейк).
 
         Args:
@@ -61,7 +71,13 @@ class ScoreHandler:
                 opponent_score["advantage"] = False
                 self.check_set_win(match, player_score, opponent_score)
 
-    def update_tiebreak_score(self, match, player, player_score, opponent_score):
+    def update_tiebreak_score(
+        self,
+        match: 'Match',
+        player: str,
+        player_score: dict[str, int | bool],
+        opponent_score: dict[str, int | bool],
+    ) -> None:
         """Обновляет счёт в тай-брейке.
 
         Args:
@@ -99,7 +115,12 @@ class ScoreHandler:
             opponent_score["points"] = 0
             match.is_tiebreak = False
 
-    def check_set_win(self, match, player_score, opponent_score):
+    def check_set_win(
+        self,
+        match: 'Match',
+        player_score: dict[str, int | bool],
+        opponent_score: dict[str, int | bool],
+    ) -> None:
         """Проверяет, выиграл ли игрок сет, и запускает тай-брейк при 6:6.
 
         Args:
@@ -130,7 +151,7 @@ class ScoreHandler:
             player_score["points"] = 0
             opponent_score["points"] = 0
 
-    def reset_match_score(self, match):
+    def reset_match_score(self, match: 'Match') -> None:
         """Сбрасывает счет матча.
         
         Args:

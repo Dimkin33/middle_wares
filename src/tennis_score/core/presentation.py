@@ -1,6 +1,5 @@
 """ViewDataHandler: подготовка данных для шаблонов (presentation/infrastructure layer)."""
 
-import json
 import logging
 
 
@@ -22,22 +21,25 @@ class ViewDataHandler:
         """
         self.logger.debug("Preparing match view data")
         score_data = {"sets": [0, 0], "games": [0, 0], "points": ["0", "0"]}
-        player1_name = player_one_name_arg if player_one_name_arg is not None else ""
-        player2_name = player_two_name_arg if player_two_name_arg is not None else ""
+        player1_name = player_one_name_arg if player_one_name_arg else (
+            getattr(match_dto, 'player1', '') if match_dto else ''
+        )
+        player2_name = player_two_name_arg if player_two_name_arg else (
+            getattr(match_dto, 'player2', '') if match_dto else ''
+        )
         self.logger.debug(f"Display names: {player1_name} vs {player2_name}")
         error_message = None
         if match_dto and match_dto.score:
-            try:
-                full_score = json.loads(match_dto.score)
+            if isinstance(match_dto.score, dict):
                 score_data = {
-                    "sets": full_score.get("sets", [0, 0]),
-                    "games": full_score.get("games", [0, 0]),
-                    "points": full_score.get("points", ["0", "0"]),
+                    "sets": match_dto.score.get("sets", [0, 0]),
+                    "games": match_dto.score.get("games", [0, 0]),
+                    "points": match_dto.score.get("points", ["0", "0"]),
                 }
                 self.logger.debug(f"Parsed score data: {score_data}")
-            except json.JSONDecodeError:
-                error_message = "Error parsing match score data"
-                self.logger.error("Failed to parse JSON score data")
+            else:
+                # score — это красивая строка (для истории)
+                score_data = match_dto.score
         else:
             error_message = "Match data is unavailable."
             self.logger.warning("No match data available for display")

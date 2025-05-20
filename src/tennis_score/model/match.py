@@ -1,8 +1,6 @@
 """Модель матча в теннисном приложении."""
-import json
 import uuid
 
-from ..dto.match_dto import MatchDTO
 from .player import Player
 
 
@@ -70,35 +68,6 @@ class Match:
             return self.score_values[p["points"]]
         return str(p["points"])
 
-    
-    def get_score_json(self) -> str:
-        """Формирует JSON для сохранения счёта."""
-        p1 = self.scores["player1"]
-        p2 = self.scores["player2"]
-        score_obj = {
-            "sets": [p1["sets"], p2["sets"]],
-            "games": [p1["games"], p2["games"]],
-            "points": [
-                self._format_points("player1", "player2"),
-                self._format_points("player2", "player1"),
-            ],
-            "tiebreak_points": [p1["tiebreak_points"], p2["tiebreak_points"]],
-            "is_tiebreak": self.is_tiebreak,
-            "winner": self.winner,
-        }
-        return json.dumps(score_obj, ensure_ascii=False)
-
-    def get_match_data(self) -> MatchDTO:
-        """Возвращает данные текущего матча в виде MatchDTO."""
-        return MatchDTO(
-            id=self.id,
-            uuid=self.match_uid,
-            player1=self.player_one_name,
-            player2=self.player_two_name,
-            winner=self.player_one_name if self.winner == self._player1_id else self.player_two_name if self.winner == self._player2_id else None,  # noqa: E501
-            score=self.get_score_json(),
-        )
-
     def set_winner(self, player_key: str) -> None:
         """Устанавливает победителя матча."""
         if player_key not in self.players:
@@ -108,3 +77,51 @@ class Match:
     def is_finished(self) -> bool:
         """Проверяет, завершён ли матч."""
         return self.winner is not None
+
+    def get_live_score_str(self) -> str:
+        """Вернуть красивую строку текущего счёта по сетам (например, 1:0)."""
+        sets1 = self.scores["player1"].get("sets", 0)
+        sets2 = self.scores["player2"].get("sets", 0)
+        return f"{sets1}:{sets2}"
+
+    def get_final_score_str(self) -> str:
+        """Вернуть красивую строку итогового счёта по сетам (например, 2:0)."""
+        sets1 = self.scores["player1"].get("sets", 0)
+        sets2 = self.scores["player2"].get("sets", 0)
+        return f"{sets1}:{sets2}"
+
+    def to_live_dto(self):
+        """Вернуть DTO с live-структурой счёта (dict)."""
+        from ..dto.match_dto import MatchDTO
+        return MatchDTO(
+            id=self.id or 0,
+            uuid=self.match_uid,
+            player1=self.player_one_name,
+            player2=self.player_two_name,
+            winner=None,
+            score={
+                "sets": [self.scores["player1"].get("sets", 0), self.scores["player2"].get("sets", 0)],
+                "games": [self.scores["player1"].get("games", 0), self.scores["player2"].get("games", 0)],
+                "points": [
+                    self._format_points("player1", "player2"),
+                    self._format_points("player2", "player1"),
+                ],
+            },
+        )
+
+    def to_final_dto(self):
+        from ..dto.match_dto import MatchDTO
+        if self.winner == self._player1_id:
+            winner_name = self.player_one_name
+        elif self.winner == self._player2_id:
+            winner_name = self.player_two_name
+        else:
+            winner_name = None
+        return MatchDTO(
+            id=self.id or 0,
+            uuid=self.match_uid,
+            player1=self.player_one_name,
+            player2=self.player_two_name,
+            winner=winner_name,
+            score=self.get_final_score_str(),
+        )

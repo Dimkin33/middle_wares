@@ -24,6 +24,12 @@
         {% endif %}
         <div class="current-match-image"></div>
         <section class="score">
+            {% if score is string %}
+                <div class="final-score">
+                    {{ player_one_name or 'Player 1' }} vs {{ player_two_name or 'Player 2' }}<br>
+                    <span class="score-value">{{ score }}</span>
+                </div>
+            {% else %}
             <table class="table">
                 <thead class="result">
                 <tr>
@@ -60,6 +66,7 @@
                 </tr>
                 </tbody>
             </table>
+            {% endif %}
         </section>
     </div>
 </main>

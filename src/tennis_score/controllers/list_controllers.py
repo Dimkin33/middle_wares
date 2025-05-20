@@ -8,15 +8,26 @@ from .match_controllers import match_service
 
 
 def list_matches_controller(params: dict) -> dict:
-    """Контроллер для отображения списка матчей."""
+    """Контроллер для отображения списка матчей с пагинацией."""
     logger = logging.getLogger("controller.list")
     logger.debug("Processing list_matches request")
 
-    # Получаем список матчей через сервис (ORM)
-    matches = match_service.data_handler.list_matches()
-    # matches — это список MatchDTO с player1, player2, winner (имена)
-    # Возвращаем контекст с данными о всех матчах
-    return make_response("matches.html", {"matches": matches})
+    # Получаем параметры пагинации из params (например, ?page=2)
+    page = int(params.get("page", [1])[0]) if "page" in params else 1
+    per_page = 4  # Можно сделать настраиваемым
+
+    # Получаем список матчей и общее количество страниц через сервис
+    matches, total_pages = match_service.data_handler.list_matches_paginated(page, per_page)
+
+    # Возвращаем контекст с данными о матчах и параметрами пагинации
+    return make_response(
+        "matches.html",
+        {
+            "matches": matches,
+            "page": page,
+            "total_pages": total_pages,
+        },
+    )
 
 
 def reset_match_controller(params: dict) -> dict:

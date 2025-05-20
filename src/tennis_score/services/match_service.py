@@ -32,10 +32,10 @@ class MatchService:
             return None
         if player not in ["player1", "player2"]:
             self.logger.error(f"Invalid player identifier: {player}")
-            return match.get_match_data()
+            return match.to_live_dto()
         if match.winner:
             self.logger.warning("Attempted to update score for a completed match")
-            return match.get_match_data()
+            return match.to_final_dto()
         player_score = match.scores[player]
         opponent = "player2" if player == "player1" else "player1"
         opponent_score = match.scores[opponent]
@@ -46,17 +46,19 @@ class MatchService:
                 self.score_handler.update_regular_score(match, player, player_score, opponent_score)
             # Проверка победителя теперь должна быть в ScoreHandler, но для совместимости:
             if player_score.get("sets", 0) >= 2:
+                player1_id = self.repository.get_or_create_player_by_name(match.player_one_name)
+                player2_id = self.repository.get_or_create_player_by_name(match.player_two_name)
+                match.set_player_ids(player1_id, player2_id)
                 match.winner = match.players[player].id
-                # Сохраняем завершённый матч и сбрасываем текущий
                 self.repository.save_finished_match(match)
                 self.repository.current_match = None
                 self.logger.info(f"Match finished and saved: {match.match_uid}")
-                return match.get_match_data()
+                return match.to_final_dto()
             self.repository.current_match = match
-            return match.get_match_data()
+            return match.to_live_dto()
         except Exception as e:
             self.logger.error(f"Error updating score: {e}")
-            return match.get_match_data()
+            return match.to_live_dto()
 
     def reset_current_match(self) -> None:
         match = self.repository.get_current_match()
