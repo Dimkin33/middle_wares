@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from ..dto.match_dto import MatchDTO
 from ..model.match import Match
-from ..model.orm_models import Base, MatchORM, PlayerORM
+from ..model.orm_models import MatchORM, PlayerORM
 
 # Настройка логирования
 logger = logging.getLogger("orm")
@@ -34,24 +34,6 @@ class OrmMatchRepository:
             raise
         finally:
             session.close()
-
-    def init_db(self, force: bool = False):
-        """Инициализация базы данных (создание таблиц)."""
-        if force:
-            Base.metadata.drop_all(self.engine)
-            logger.warning("База данных сброшена!")
-        Base.metadata.create_all(self.engine)
-        logger.info("База данных инициализирована.")
-
-    def add_player(self, name: str) -> PlayerORM:
-        """Добавление игрока в БД."""
-        if not name:
-            raise ValueError("Имя игрока не может быть пустым")
-        with self._get_session() as session:
-            player = PlayerORM(name=name)
-            session.add(player)
-            logger.info(f"Добавлен игрок: {player}")
-            return player
 
     def add_match(self, uuid: str, player1_id: int, player2_id: int, winner_id: int | None, score: str) -> int:  # noqa: E501
         """Добавление матча в БД. Возвращает id созданного матча."""
@@ -145,9 +127,8 @@ class OrmMatchRepository:
         player1_id = self.get_or_create_player_by_name(match.player_one_name)
         player2_id = self.get_or_create_player_by_name(match.player_two_name)
         match.set_player_ids(player1_id, player2_id)
-        winner_id = None
-        if match.winner:
-            winner_id = player1_id if match.winner == match.players["player1"].id else player2_id
+        # winner теперь всегда id из базы
+        winner_id = match.winner if match.winner in (player1_id, player2_id) else None
 
         match_id = self.add_match(
             uuid=match.match_uid,
@@ -161,17 +142,6 @@ class OrmMatchRepository:
             orm_match = session.query(MatchORM).get(match_id)
             return self.orm_to_dto(orm_match)
 
-    def get_match_by_uuid(self, match_uuid: str) -> MatchDTO | None:
-        """Получить матч по UUID в формате DTO."""
-        if not match_uuid or not isinstance(match_uuid, str):
-            raise ValueError("UUID матча должен быть непустой строкой")
-        with self._get_session() as session:
-            match = session.query(MatchORM).filter_by(uuid=match_uuid).first()
-            if not match:
-                logger.info(f"Матч с UUID {match_uuid} не найден")
-                return None
-            return self.orm_to_dto(match)
-
     @property
     def current_match(self):
         """Текущий матч."""
@@ -181,10 +151,6 @@ class OrmMatchRepository:
     def current_match(self, value):
         """Установить текущий матч."""
         self._current_match = value
-
-    def reset_current_match(self):
-        """Сбросить текущий матч."""
-        self._current_match = None
 
     # Для обратной совместимости с get_current_match()
     def get_current_match(self):

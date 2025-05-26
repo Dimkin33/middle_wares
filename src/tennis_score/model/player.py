@@ -1,5 +1,4 @@
 """Модель игрока в теннисном приложении."""
-from ..dto.player_dto import PlayerDTO
 
 
 class Player:
@@ -14,7 +13,3 @@ class Player:
             raise ValueError("Имя игрока не может быть пустым")
         self.id: int | None = id
         self.name: str = name
-
-    def to_dto(self) -> PlayerDTO:
-        """Преобразует игрока в DTO."""
-        return PlayerDTO(id=self.id, name=self.name)

@@ -74,16 +74,6 @@ class Match:
             raise ValueError("Некорректный ключ игрока")
         self.winner = self._player1_id if player_key == "player1" else self._player2_id
 
-    def is_finished(self) -> bool:
-        """Проверяет, завершён ли матч."""
-        return self.winner is not None
-
-    def get_live_score_str(self) -> str:
-        """Вернуть красивую строку текущего счёта по сетам (например, 1:0)."""
-        sets1 = self.scores["player1"].get("sets", 0)
-        sets2 = self.scores["player2"].get("sets", 0)
-        return f"{sets1}:{sets2}"
-
     def get_final_score_str(self) -> str:
         """Вернуть красивую строку итогового счёта по сетам (например, 2:0)."""
         sets1 = self.scores["player1"].get("sets", 0)
