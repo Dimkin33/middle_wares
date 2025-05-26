@@ -39,6 +39,7 @@ logging.getLogger('waitress').setLevel(logging.INFO)
 logging.getLogger('service').setLevel(logging.DEBUG)
 logging.getLogger('repository').setLevel(logging.DEBUG)
 logging.getLogger('core').setLevel(logging.DEBUG)
+logging.getLogger('presentation').setLevel(logging.DEBUG)
 
 
 serve(app, host='127.0.0.1', port=8080)

@@ -18,8 +18,7 @@ class OrmMatchRepository:
     def __init__(self, db_url: str = "sqlite:///tennis_score.db"):
         self.engine = create_engine(db_url, echo=False)
         self.Session = sessionmaker(bind=self.engine)
-        self.finished_matches = []
-        self._current_match = None
+        self._active_matches: dict[str, Match] = {} # Хранилище для активных матчей (не сохраненных в БД)
 
     @contextmanager
     def _get_session(self):
@@ -107,17 +106,32 @@ class OrmMatchRepository:
                 score=match.score_str,
             )
 
-    def create_match(self, player_one_name: str, player_two_name: str) -> MatchDTO:
-        """Создать новый матч и сохранить его как текущий."""
+    def create_match(self, player_one_name: str, player_two_name: str) -> Match:
+        """Создать новый объект Match и сохранить его как активный (в памяти)."""
         if not player_one_name or not player_two_name:
             raise ValueError("Имена игроков не могут быть пустыми")
         if player_one_name == player_two_name:
             raise ValueError("Игроки должны быть разными")
 
-        # Удаляем неиспользуемые переменные player1_id, player2_id
         match = Match(player_one_name, player_two_name)
-        self._current_match = match
-        return match.to_live_dto()
+        self._active_matches[match.match_uid] = match
+        logger.info(f"Создан активный матч: {match.match_uid}, {player_one_name} vs {player_two_name}")
+        return match
+
+    def get_active_match_by_uuid(self, uuid: str) -> Match | None:
+        """Получить активный (не сохраненный в БД) матч по UUID из памяти."""
+        return self._active_matches.get(uuid)
+
+    def get_match_by_uuid_from_db(self, match_uuid: str) -> MatchDTO | None:
+        """Получить данные матча из БД по UUID и вернуть как MatchDTO."""
+        logger.debug(f"Attempting to fetch match from DB by UUID: {match_uuid}")
+        with self._get_session() as session:
+            match_orm = session.query(MatchORM).filter_by(uuid=match_uuid).first()
+            if match_orm:
+                logger.debug(f"Match found in DB: {match_uuid}")
+                return self.orm_to_dto(match_orm)
+            logger.debug(f"Match with UUID {match_uuid} not found in DB.")
+            return None
 
     def save_finished_match(self, match: Match) -> MatchDTO:
         """Сохранить завершённый матч в БД и вернуть его DTO."""
@@ -126,32 +140,45 @@ class OrmMatchRepository:
 
         player1_id = self.get_or_create_player_by_name(match.player_one_name)
         player2_id = self.get_or_create_player_by_name(match.player_two_name)
-        match.set_player_ids(player1_id, player2_id)
-        # winner теперь всегда id из базы
-        winner_id = match.winner if match.winner in (player1_id, player2_id) else None
+        
+        # Убедимся, что ID игроков установлены в объекте Match перед сохранением
+        # Это важно, если set_player_ids не был вызван ранее или был вызван с None
+        if getattr(match, 'player_one_id', None) is None or getattr(match, 'player_two_id', None) is None:
+            match.set_player_ids(player1_id, player2_id)
+        
+        # winner_id должен быть числовым ID или None
+        winner_id = None
+        if match.winner: # match.winner может быть player_key ("player1"/"player2") или уже ID
+            if match.winner == "player1":
+                winner_id = player1_id
+            elif match.winner == "player2":
+                winner_id = player2_id
+            elif isinstance(match.winner, int) and match.winner in (player1_id, player2_id):
+                winner_id = match.winner
+            else: # Если match.winner это что-то неожиданное, логируем и не ставим победителя
+                logger.warning(
+                    f"Некорректное значение match.winner ({match.winner}) для матча {match.match_uid}. "
+                    f"Победитель не будет сохранен."
+                )
 
-        match_id = self.add_match(
+
+        match_db_id = self.add_match(
             uuid=match.match_uid,
             player1_id=player1_id,
             player2_id=player2_id,
-            winner_id=winner_id,
-            score=match.get_final_score_str(),  # только красивая строка счёта
+            winner_id=winner_id, 
+            score=match.get_final_score_str(),
         )
-        logger.info(f"Матч сохранён: {match_id}, {match.match_uid}, {match.player_one_name} vs {match.player_two_name}")  # noqa: E501
+        logger.info(
+            f"Матч сохранён в БД: id={match_db_id}, uuid={match.match_uid}, "
+            f"{match.player_one_name} vs {match.player_two_name}"
+        )
+        
+        # Удаляем матч из активных после сохранения
+        if match.match_uid in self._active_matches:
+            del self._active_matches[match.match_uid]
+            logger.info(f"Матч {match.match_uid} удален из списка активных.")
+            
         with self._get_session() as session:
-            orm_match = session.query(MatchORM).get(match_id)
+            orm_match = session.query(MatchORM).get(match_db_id)
             return self.orm_to_dto(orm_match)
-
-    @property
-    def current_match(self):
-        """Текущий матч."""
-        return self._current_match
-
-    @current_match.setter
-    def current_match(self, value):
-        """Установить текущий матч."""
-        self._current_match = value
-
-    # Для обратной совместимости с get_current_match()
-    def get_current_match(self):
-        return self._current_match

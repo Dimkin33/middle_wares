@@ -12,10 +12,25 @@ class ScoreHandler:
     def __init__(self) -> None:
         self.logger: logging.Logger = logging.getLogger("service.score")
 
+    def _check_and_set_match_winner(
+        self,
+        match: 'Match',
+        player_key: str,  # "player1" or "player2"
+        player_score: dict[str, int | bool],
+    ) -> None:
+        """Проверяет, выиграл ли игрок матч, и устанавливает победителя, если да."""
+        # Предполагаем, что у матча есть атрибут SETS_TO_WIN, иначе по умолчанию 2
+        sets_to_win = getattr(match, "SETS_TO_WIN", 2)
+        if player_score.get("sets", 0) >= sets_to_win:
+            match.set_winner(player_key)
+            self.logger.info(
+                f"Player {player_key} has won the match with {player_score.get('sets', 0)} sets."
+            )
+
     def update_regular_score(
         self,
         match: 'Match',
-        player: str,
+        player: str,  # "player1" or "player2"
         player_score: dict[str, int | bool],
         opponent_score: dict[str, int | bool],
     ) -> None:
@@ -43,7 +58,8 @@ class ScoreHandler:
             player_score["games"] += 1
             player_score["points"] = 0
             opponent_score["points"] = 0
-            self.check_set_win(match, player_score, opponent_score)
+            # self.check_set_win(match, player_score, opponent_score) # Старый вызов
+            self.check_set_win(match, player, player_score, opponent_score) # Новый вызов
         elif score < len(match.score_values) - 1:
             # Обычное увеличение очков (0->15->30->40)
             old_points = match.score_values[score]
@@ -69,12 +85,13 @@ class ScoreHandler:
                 player_score["points"] = 0
                 opponent_score["points"] = 0
                 opponent_score["advantage"] = False
-                self.check_set_win(match, player_score, opponent_score)
+                # self.check_set_win(match, player_score, opponent_score) # Старый вызов
+                self.check_set_win(match, player, player_score, opponent_score) # Новый вызов
 
     def update_tiebreak_score(
         self,
         match: 'Match',
-        player: str,
+        player: str, # "player1" or "player2"
         player_score: dict[str, int | bool],
         opponent_score: dict[str, int | bool],
     ) -> None:
@@ -105,8 +122,11 @@ class ScoreHandler:
         if win_condition:
             p_score = player_score["tiebreak_points"]
             o_score = opponent_score["tiebreak_points"]
-            self.logger.info(f"Player {player} wins tiebreak: {p_score}-{o_score}")
-            player_score["sets"] += 1
+            self.logger.info(
+                f"Player {player} wins tiebreak and set. Score: {p_score}-{o_score}. "
+                f"Total sets for {player}: {player_score.get('sets',0)}"
+            )
+            player_score["sets"] += 1 # Увеличиваем счет сетов
             player_score["games"] = 0
             opponent_score["games"] = 0
             player_score["tiebreak_points"] = 0
@@ -114,10 +134,12 @@ class ScoreHandler:
             player_score["points"] = 0
             opponent_score["points"] = 0
             match.is_tiebreak = False
+            self._check_and_set_match_winner(match, player, player_score) # Проверяем на победителя матча
 
     def check_set_win(
         self,
         match: 'Match',
+        player_key: str, # Добавлен параметр player_key ("player1" or "player2")
         player_score: dict[str, int | bool],
         opponent_score: dict[str, int | bool],
     ) -> None:
@@ -125,6 +147,7 @@ class ScoreHandler:
 
         Args:
             match: объект матча
+            player_key: идентификатор игрока ("player1" или "player2")
             player_score: счет игрока
             opponent_score: счет соперника
         """
@@ -133,15 +156,25 @@ class ScoreHandler:
         )
         
         if player_score["games"] >= 6 and player_score["games"] >= opponent_score["games"] + 2:
-            # Игрок выиграл сет с преимуществом в 2 или более гейма
             self.logger.info(
-                f"Set won with score {player_score['games']}-{opponent_score['games']}"
+                f"Player {player_key} won set with score {player_score['games']}-{opponent_score['games']}"
             )
             player_score["sets"] += 1
             player_score["games"] = 0
             opponent_score["games"] = 0
             player_score["points"] = 0
             opponent_score["points"] = 0
+            self._check_and_set_match_winner(match, player_key, player_score) # Проверяем на победителя матча
+        elif player_score["games"] == 7 and opponent_score["games"] == 5: # Явная победа 7-5
+             self.logger.info(
+                f"Player {player_key} won set with score 7-5"
+            )
+             player_score["sets"] += 1
+             player_score["games"] = 0
+             opponent_score["games"] = 0
+             player_score["points"] = 0
+             opponent_score["points"] = 0
+             self._check_and_set_match_winner(match, player_key, player_score) # Проверяем на победителя матча
         elif player_score["games"] == 6 and opponent_score["games"] == 6:
             # Ничья 6:6, начинаем тай-брейк
             self.logger.info("Tiebreak started at 6-6")
