@@ -4,7 +4,11 @@ import logging
 from urllib.parse import parse_qs
 
 from ..controllers.list_controllers import list_matches_controller, reset_match_controller
-from ..controllers.match_controllers import match_score_controller, new_match_controller
+from ..controllers.match_controllers import (
+    match_score_controller,
+    new_match_controller,
+    view_match_controller,
+)
 from ..controllers.view_controllers import TemplateViewController
 from .response import make_response
 
@@ -17,15 +21,27 @@ class RoutesHandler:
 
     def route_request(self, path: str, method: str, environ: dict | None = None) -> dict:
         self.logger.info(f"route_request: {method} {path}")
-        controller = self.routing_table.get((path, method))
+        
+        # Отделяем путь от строки запроса для точного совпадения маршрута
+        actual_path = path.split('?')[0]
+        
+        controller = self.routing_table.get((actual_path, method))
         if not controller:
-            self.logger.warning(f"Route not found: {method} {path}")
+            self.logger.warning(f"Route not found: {method} {actual_path}")
             return make_response(None, {}, status="404 Not Found")
-        self.logger.debug(f"Matched route: {method} {path}")
+        self.logger.debug(f"Matched route: {method} {actual_path}")
+        
         params = {}
-        if method == "POST" and environ:
-            params = self._parse_post_data(environ)
-            self.logger.debug(f"POST params: {params}")
+        if environ: # environ должен быть всегда доступен
+            if method == "POST":
+                params = self._parse_post_data(environ)
+                self.logger.debug(f"POST params: {params}")
+            elif method == "GET":
+                query_string = environ.get("QUERY_STRING", "")
+                if query_string:
+                    params = parse_qs(query_string)
+                    self.logger.debug(f"GET query params: {params}")
+        
         return controller(params)
 
     @staticmethod
@@ -43,10 +59,11 @@ ROUTING_TABLE: dict[tuple[str, str], callable] = {
     ("/", "GET"): TemplateViewController("index.html"),
     ("/new-match", "GET"): TemplateViewController("new-match.html"),
     ("/new-match", "POST"): new_match_controller,
-    ("/match-score", "GET"): TemplateViewController("match-score.html"),
+    ("/match-score", "GET"): match_score_controller, # Изменено для динамического отображения
     ("/match-score", "POST"): match_score_controller,
     ("/matches", "GET"): list_matches_controller,
     ("/reset-match", "POST"): reset_match_controller,
+    ("/view-match", "GET"): view_match_controller, # Добавлен маршрут для просмотра матча
 }
 
 routes_handler = RoutesHandler(ROUTING_TABLE)

@@ -107,26 +107,61 @@ def match_score_controller(params: dict) -> dict:
 #     }
 #     return make_response("matches.html", view_data)
 
-# def view_match_controller(params: dict) -> dict:
-#     """Контроллер для просмотра конкретного завершенного матча по UUID."""
-#     logger = logging.getLogger("controller")
-#     match_uuid = params.get("match_uuid", [""])[0].strip()
-#     if not match_uuid:
-#         # Обработка ошибки: UUID не предоставлен
-#         return make_response(
-#             "matches.html", 
-#             {"error": "Match UUID is required.", "matches": [], "total_pages": 0}
-#         )
-#
-#     match_dto = match_service.get_match_data_by_uuid(match_uuid) # Этот метод теперь ищет и в БД
-#     if not match_dto:
-#         # Обработка ошибки: Матч не найден
-#         return make_response(
-#             "matches.html", 
-#             {"error": f"Match with UUID {match_uuid} not found.", "matches": [], "total_pages": 0}
-#         )
-#     
-#     view_data = match_service.prepare_match_view_data(match_dto)
-#     view_data["match_uuid"] = match_dto.uuid
-#     view_data["info"] = "Просмотр завершенного матча."
-#     return make_response("match-score.html", view_data) # Используем тот же шаблон для отображения
+def view_match_controller(params: dict) -> dict:
+    """Контроллер для просмотра конкретного завершенного матча по UUID."""
+    logger = logging.getLogger("controller.view") # Изменено имя логгера для ясности
+    match_uuid = params.get("match_uuid", [""])[0].strip()
+    
+    # Получаем match_uuid из GET-параметров, если он там есть (например, /view-match?match_uuid=UUID)
+    if not match_uuid and "match_uuid" in params: 
+        # Это условие может быть избыточным, если params всегда содержит ключ, даже с пустым списком
+        uuid_list = params.get("match_uuid")
+        if uuid_list and isinstance(uuid_list, list) and len(uuid_list) > 0:
+            match_uuid = uuid_list[0].strip()
+
+    logger.debug(f"view_match_controller: trying to view match with UUID: '{match_uuid}'")
+
+    if not match_uuid:
+        logger.warning("No match_uuid provided to view_match_controller")
+        # Вместо отображения списка матчей с ошибкой, лучше показать специальную страницу
+        # или перенаправить на список матчей с информационным сообщением.
+        # Для простоты пока оставим возврат на matches.html с ошибкой.
+        return make_response(
+            "matches.html", 
+            {"error": "Match UUID is required to view details.", "matches": [], "total_pages": 0, "page": 1}
+        )
+
+    # Используем существующий метод get_match_data_by_uuid, который ищет и в активных, и в БД
+    match_dto = match_service.get_match_data_by_uuid(match_uuid) 
+    
+    if not match_dto:
+        logger.warning(f"Match with UUID {match_uuid} not found by view_match_controller.")
+        return make_response(
+            "matches.html", # Можно создать отдельный шаблон для "матч не найден"
+            {
+                "error": f"Match with UUID {match_uuid} not found.", 
+                "matches": [], "total_pages": 0, "page": 1 # Для шаблона matches.html
+            } 
+        )
+    
+    view_data = match_service.prepare_match_view_data(match_dto)
+    view_data["match_uuid"] = match_dto.uuid # Убедимся, что UUID есть
+    
+    # Определяем, является ли матч завершенным, чтобы показать соответствующую информацию
+    if match_dto.winner:
+        view_data["info"] = (
+            f"Просмотр завершенного матча: {match_dto.player_one_name} vs "
+            f"{match_dto.player_two_name}."
+        )
+    else:
+        view_data["info"] = (
+            f"Просмотр текущего матча: {match_dto.player_one_name} vs "
+            f"{match_dto.player_two_name}."
+        )
+        # Если матч не завершен, возможно, мы хотим показать элементы управления счетом,
+        # тогда нужно убедиться, что шаблон match-score.html это корректно обработает.
+        # Или же для просмотра активных матчей всегда использовать /match-score?match_uuid=...
+
+    # Используем шаблон match-score.html для отображения деталей матча.
+    # Этот шаблон уже умеет отображать счет, игроков и победителя.
+    return make_response("match-score.html", view_data)
