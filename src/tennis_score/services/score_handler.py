@@ -126,6 +126,12 @@ class ScoreHandler:
                 f"Player {player} wins tiebreak and set. Score: {p_score}-{o_score}. "
                 f"Total sets for {player}: {player_score.get('sets',0)}"
             )
+
+            # Записываем счет сета в историю перед сбросом
+            player1_games_in_set = 7 if player == "player1" else 6
+            player2_games_in_set = 7 if player == "player2" else 6
+            match.add_completed_set_score(player1_games_in_set, player2_games_in_set)
+
             player_score["sets"] += 1 # Увеличиваем счет сетов
             player_score["games"] = 0
             opponent_score["games"] = 0
@@ -155,26 +161,33 @@ class ScoreHandler:
             f"Checking set win: games {player_score['games']}-{opponent_score['games']}"
         )
         
-        if player_score["games"] >= 6 and player_score["games"] >= opponent_score["games"] + 2:
+        pg = player_score["games"]
+        og = opponent_score["games"]
+        
+        set_won = False
+        if pg >= 6 and pg >= og + 2 or pg == 7 and og == 5:
+            set_won = True
+        # Случай 7-6 не обрабатывается здесь, так как он должен проходить через тай-брейк.
+        # Однако, если логика тай-брейка не вызывается, а сет завершается 7-6 (например, если это правило), 
+        # то это условие нужно будет добавить или изменить.
+        # Текущая логика предполагает, что 7-6 возможно только после тай-брейка.
+
+        if set_won:
             self.logger.info(
-                f"Player {player_key} won set with score {player_score['games']}-{opponent_score['games']}"
+                f"Player {player_key} won set with score {pg}-{og}"
             )
+            # Записываем счет сета в историю перед сбросом
+            if player_key == "player1":
+                match.add_completed_set_score(pg, og)
+            else: # player_key == "player2"
+                match.add_completed_set_score(og, pg)
+            
             player_score["sets"] += 1
             player_score["games"] = 0
             opponent_score["games"] = 0
             player_score["points"] = 0
             opponent_score["points"] = 0
             self._check_and_set_match_winner(match, player_key, player_score) # Проверяем на победителя матча
-        elif player_score["games"] == 7 and opponent_score["games"] == 5: # Явная победа 7-5
-             self.logger.info(
-                f"Player {player_key} won set with score 7-5"
-            )
-             player_score["sets"] += 1
-             player_score["games"] = 0
-             opponent_score["games"] = 0
-             player_score["points"] = 0
-             opponent_score["points"] = 0
-             self._check_and_set_match_winner(match, player_key, player_score) # Проверяем на победителя матча
         elif player_score["games"] == 6 and opponent_score["games"] == 6:
             # Ничья 6:6, начинаем тай-брейк
             self.logger.info("Tiebreak started at 6-6")
