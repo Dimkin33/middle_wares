@@ -8,7 +8,6 @@ from ..controllers.match_controllers import (
     match_score_controller,
     new_match_controller,
     reset_match_controller,
-    view_match_controller,
 )
 from ..controllers.view_controllers import TemplateViewController
 from .response import make_response
@@ -64,7 +63,6 @@ ROUTING_TABLE: dict[tuple[str, str], callable] = {
     ("/match-score", "POST"): match_score_controller,
     ("/matches", "GET"): list_matches_controller,
     ("/reset-match", "POST"): reset_match_controller,
-    ("/view-match", "GET"): view_match_controller, # Добавлен маршрут для просмотра матча
 }
 
 routes_handler = RoutesHandler(ROUTING_TABLE)

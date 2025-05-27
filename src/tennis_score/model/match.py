@@ -38,7 +38,8 @@ class Match:
         self.is_tiebreak: bool = False
         self.winner: int | None = None
         self.id: int | None = None
-        self.set_scores_history: list[tuple[int, int]] = []  # История счета по геймам в завершенных сетах
+        # История: (игры_игрока1, игры_игрока2, очки_тайбрейка_игрока1 | None, очки_тайбрейка_игрока2 | None)
+        self.set_scores_history: list[tuple[int, int, int | None, int | None]] = []
 
     @property
     def player_one_name(self) -> str:
@@ -75,19 +76,38 @@ class Match:
             raise ValueError("Некорректный ключ игрока")
         self.winner = self._player1_id if player_key == "player1" else self._player2_id
 
-    def add_completed_set_score(self, player1_set_games: int, player2_set_games: int) -> None:
-        """Добавляет счет завершенного сета в историю."""
-        self.set_scores_history.append((player1_set_games, player2_set_games))
+    def add_completed_set_score(
+        self,
+        player1_set_games: int,
+        player2_set_games: int,
+        player1_tiebreak_score: int | None = None,
+        player2_tiebreak_score: int | None = None,
+    ) -> None:
+        """Добавляет счет сета в историю, вкл. очки тай-брейка (если был) для обоих игроков."""
+        self.set_scores_history.append(
+            (player1_set_games, player2_set_games, player1_tiebreak_score, player2_tiebreak_score)
+        )
 
     def get_final_score_str(self) -> str:
         """Возвращает строку итогового счета.
 
         Если есть завершенные сеты, форматирует историю счета по геймам в них.
-        Например: "6-0, 6-2".
+        Включает полный счет тай-брейка, если сет им завершился (например, "6-0, 7-6(7-2)").
         В противном случае, возвращает текущий общий счет по сетам (например, "0-0").
         """
         if self.set_scores_history:
-            return ", ".join([f"{s[0]}-{s[1]}" for s in self.set_scores_history])
+            formatted_scores = []
+            for s in self.set_scores_history:
+                p1_games, p2_games, p1_tb_score, p2_tb_score = s
+                score_str = f"{p1_games}-{p2_games}"
+                if p1_tb_score is not None and p2_tb_score is not None:
+                    # Определяем, кто выиграл тай-брейк, чтобы поставить его очки первыми
+                    if p1_games > p2_games: # Игрок 1 выиграл сет (и тай-брейк)
+                        score_str += f"({p1_tb_score}-{p2_tb_score})"
+                    else: # Игрок 2 выиграл сет (и тай-брейк)
+                        score_str += f"({p2_tb_score}-{p1_tb_score})"
+                formatted_scores.append(score_str)
+            return ", ".join(formatted_scores)
         # Если история пуста, возвращаем текущий счет по выигранным сетам
         return f'{self.scores["player1"]["sets"]}-{self.scores["player2"]["sets"]}'
 
@@ -95,7 +115,7 @@ class Match:
         """Вернуть DTO с live-структурой счёта (dict)."""
         from ..dto.match_dto import MatchDTO
         return MatchDTO(
-            id=self.id or 0,
+            id=self.id,  # Изменено с self.id or 0 на self.id
             uuid=self.match_uid,
             player1=self.player_one_name,
             player2=self.player_two_name,
@@ -107,6 +127,11 @@ class Match:
                     self._format_points("player1", "player2"),
                     self._format_points("player2", "player1"),
                 ],
+                "tiebreak_points": [
+                    self.scores["player1"].get("tiebreak_points", 0),
+                    self.scores["player2"].get("tiebreak_points", 0),
+                ],
+                "is_tiebreak": self.is_tiebreak,
             },
         )
 

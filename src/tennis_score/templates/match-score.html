@@ -39,8 +39,8 @@
                     <th class="table-text">Player</th>
                     <th class="table-text">Sets</th>
                     <th class="table-text">Games</th>
-                    <th class="table-text">Points</th>
-                    <th class="table-text">Actions</th> {# Добавлен заголовок для колонки с кнопками #}
+                    <th class="table-text">Points / Tiebreak</th> {# Изменен заголовок #}
+                    <th class="table-text">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,7 +48,13 @@
                     <td class="table-text">{{ player_one_name or 'Player 1' }}</td>
                     <td class="table-text">{{ score.sets[0] }}</td>
                     <td class="table-text">{{ score.games[0] }}</td>
-                    <td class="table-text">{{ score.points[0] }}</td>
+                    <td class="table-text">
+                        {% if score.is_tiebreak %}
+                            {{ score.tiebreak_points[0] }}
+                        {% else %}
+                            {{ score.points[0] }}
+                        {% endif %}
+                    </td>
                     <td class="table-text">
                         <form method="post" action="/match-score">
                             <input type="hidden" name="player" value="player1">
@@ -61,7 +67,13 @@
                     <td class="table-text">{{ player_two_name or 'Player 2' }}</td>
                     <td class="table-text">{{ score.sets[1] }}</td>
                     <td class="table-text">{{ score.games[1] }}</td>
-                    <td class="table-text">{{ score.points[1] }}</td>
+                    <td class="table-text">
+                        {% if score.is_tiebreak %}
+                            {{ score.tiebreak_points[1] }}
+                        {% else %}
+                            {{ score.points[1] }}
+                        {% endif %}
+                    </td>
                     <td class="table-text">
                         <form method="post" action="/match-score">
                             <input type="hidden" name="player" value="player2">
@@ -77,6 +89,10 @@
             {% endif %}
             {% endif %}
         </section>
+        <form method="post" action="/reset-match" style="margin-top: 20px; text-align: center;">
+            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
+            <button type="submit" class="btn reset-match-btn" {% if not match_uuid %}disabled{% endif %}>Reset Match Score</button>
+        </form>
     </div>
 </main>
 

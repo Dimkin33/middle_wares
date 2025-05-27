@@ -1,9 +1,10 @@
 """Репозиторий для работы с матчами и игроками через ORM (SQLite)."""
 import logging
+import math
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine, or_  # Добавлен or_
-from sqlalchemy.orm import aliased, sessionmaker  # Добавлен aliased
+from sqlalchemy import create_engine  # Удален or_
+from sqlalchemy.orm import sessionmaker  # Удален aliased
 
 from ..dto.match_dto import MatchDTO
 from ..model.match import Match
@@ -59,53 +60,86 @@ class OrmMatchRepository:
             logger.info(f"Добавлен матч: {match}")
             return match.id
 
+    def _orm_to_dto_internal(self, match_orm: MatchORM, player_map: dict[int, str]) -> MatchDTO:
+        """Внутренний метод для преобразования ORM-объекта матча в DTO с использованием карты игроков."""
+        return MatchDTO(
+            id=match_orm.id,
+            uuid=match_orm.uuid,
+            player1=player_map.get(match_orm.player1_id),
+            player2=player_map.get(match_orm.player2_id),
+            winner=player_map.get(match_orm.winner_id),
+            score=match_orm.score_str,
+        )
+
     def list_matches_paginated(
         self, page: int = 1, per_page: int = 10, filter_query: str | None = None
     ) -> tuple[list[MatchDTO], int]:
-        import math
-        """Получить список матчей с пагинацией и общее число страниц, с опциональной фильтрацией."""
-        offset = (page - 1) * per_page
+        """Получить список матчей (активных и из БД) с пагинацией и фильтрацией."""
+        logger.info(f"Listing matches. Current _active_matches: {self._active_matches}") # <--- Добавлено логирование
+        # 1. Get All Active Match DTOs
+        active_match_dtos = [match.to_live_dto() for match in self._active_matches.values()]
+        logger.info(f"Active match DTOs generated: {len(active_match_dtos)}") # <--- Добавлено логирование
+
+        # 2. Get All DB Match DTOs
+        all_db_match_dtos = []
         with self._get_session() as session:
-            base_query = session.query(MatchORM)
+            all_matches_orm = session.query(MatchORM).all()
 
-            if filter_query:
-                # Используем псевдонимы для таблицы PlayerORM, чтобы различать player1 и player2
-                player1_alias = aliased(PlayerORM)
-                player2_alias = aliased(PlayerORM)
+            if all_matches_orm:
+                player_ids_to_fetch = set()
+                for m_orm in all_matches_orm:
+                    if m_orm.player1_id:
+                        player_ids_to_fetch.add(m_orm.player1_id)
+                    if m_orm.player2_id:
+                        player_ids_to_fetch.add(m_orm.player2_id)
+                    if m_orm.winner_id:
+                        player_ids_to_fetch.add(m_orm.winner_id)
                 
-                query_with_filter = base_query.join(
-                    player1_alias, MatchORM.player1_id == player1_alias.id
-                ).join(
-                    player2_alias, MatchORM.player2_id == player2_alias.id
-                ).filter(
-                    or_(
-                        player1_alias.name.ilike(f"%{filter_query}%"),
-                        player2_alias.name.ilike(f"%{filter_query}%")
-                    )
-                )
-                # Считаем общее количество отфильтрованных матчей
-                total_matches = query_with_filter.count()
-                
-                # Применяем пагинацию к отфильтрованному запросу
-                matches_orm = (
-                    query_with_filter.order_by(MatchORM.id.desc())
-                    .offset(offset)
-                    .limit(per_page)
-                    .all()
-                )
-            else:
-                # Если фильтра нет, считаем все матчи и применяем пагинацию к базовому запросу
-                total_matches = base_query.count()
-                matches_orm = (
-                    base_query.order_by(MatchORM.id.desc())
-                    .offset(offset)
-                    .limit(per_page)
-                    .all()
-                )
+                player_map = {}
+                if player_ids_to_fetch:
+                    players_orm = session.query(PlayerORM).filter(
+                        PlayerORM.id.in_(list(player_ids_to_fetch)) # type: ignore
+                    ).all()
+                    player_map = {p.id: p.name for p in players_orm}
 
-            total_pages = math.ceil(total_matches / per_page) if per_page > 0 else 1
-            
-            return [self.orm_to_dto(m) for m in matches_orm], total_pages
+                all_db_match_dtos = [
+                    self._orm_to_dto_internal(m_orm, player_map) for m_orm in all_matches_orm
+                ]
+
+        # 3. Combine All DTOs
+        combined_dtos = active_match_dtos + all_db_match_dtos
+        
+        # 4. Filter Combined DTOs
+        if filter_query:
+            normalized_filter = filter_query.lower()
+            filtered_dtos = [
+                dto for dto in combined_dtos if (
+                    (dto.player1 and normalized_filter in dto.player1.lower()) or
+                    (dto.player2 and normalized_filter in dto.player2.lower())
+                )
+            ]
+        else:
+            filtered_dtos = combined_dtos
+
+        # 5. Sort Filtered DTOs
+        # Сначала активные (id is None), затем по убыванию id для сохраненных
+        filtered_dtos.sort(key=lambda dto: (0 if dto.id is None else 1, -(dto.id or 0)))
+
+        # 6. Paginate Sorted DTOs
+        total_matches = len(filtered_dtos)
+
+        if per_page > 0:
+            total_pages = math.ceil(total_matches / per_page)
+        else:
+            total_pages = 0 if total_matches == 0 else 1 
+        
+        total_pages = int(max(0, total_pages))
+
+        start_offset = (page - 1) * per_page
+        end_offset = start_offset + per_page
+        paginated_dtos = filtered_dtos[start_offset:end_offset]
+
+        return paginated_dtos, total_pages
 
     def get_or_create_player_by_name(self, name: str) -> int:
         """Получить ID игрока по имени или создать, если не найден."""
@@ -148,6 +182,7 @@ class OrmMatchRepository:
         match = Match(player_one_name, player_two_name)
         self._active_matches[match.match_uid] = match
         logger.info(f"Создан активный матч: {match.match_uid}, {player_one_name} vs {player_two_name}")
+        logger.info(f"Current _active_matches after creation: {self._active_matches}") # <--- Добавлено логирование
         return match
 
     def get_active_match_by_uuid(self, uuid: str) -> Match | None:
@@ -166,51 +201,48 @@ class OrmMatchRepository:
             return None
 
     def save_finished_match(self, match: Match) -> MatchDTO:
-        """Сохранить завершённый матч в БД и вернуть его DTO."""
+        """Сохранить завершённый матч в БД, вернуть его DTO и удалить из активных."""
         if not match.player_one_name or not match.player_two_name:
             raise ValueError("Имена игроков не могут быть пустыми")
 
         player1_id = self.get_or_create_player_by_name(match.player_one_name)
         player2_id = self.get_or_create_player_by_name(match.player_two_name)
         
-        # Убедимся, что ID игроков установлены в объекте Match перед сохранением
-        # Это важно, если set_player_ids не был вызван ранее или был вызван с None
         if getattr(match, 'player_one_id', None) is None or getattr(match, 'player_two_id', None) is None:
             match.set_player_ids(player1_id, player2_id)
         
-        # winner_id должен быть числовым ID или None
         winner_id = None
-        if match.winner: # match.winner может быть player_key ("player1"/"player2") или уже ID
+        if match.winner:
             if match.winner == "player1":
                 winner_id = player1_id
             elif match.winner == "player2":
                 winner_id = player2_id
             elif isinstance(match.winner, int) and match.winner in (player1_id, player2_id):
                 winner_id = match.winner
-            else: # Если match.winner это что-то неожиданное, логируем и не ставим победителя
+            else:
                 logger.warning(
                     f"Некорректное значение match.winner ({match.winner}) для матча {match.match_uid}. "
                     f"Победитель не будет сохранен."
                 )
 
-
-        match_db_id = self.add_match(
+        self.add_match( # Убрали присваивание match_db_id
             uuid=match.match_uid,
             player1_id=player1_id,
             player2_id=player2_id,
-            winner_id=winner_id, 
+            winner_id=winner_id,
             score=match.get_final_score_str(),
         )
-        logger.info(
-            f"Матч сохранён в БД: id={match_db_id}, uuid={match.match_uid}, "
-            f"{match.player_one_name} vs {match.player_two_name}"
-        )
-        
-        # Удаляем матч из активных после сохранения
+
+        saved_match_dto = self.get_match_by_uuid_from_db(match.match_uid)
+
+        if not saved_match_dto:
+            raise RuntimeError(f"Не удалось получить DTO для сохраненного матча {match.match_uid} из БД.")
+
+        logger.info(f"Attempting to remove match {match.match_uid} from _active_matches. Current: {self._active_matches}") # <--- Добавлено логирование
         if match.match_uid in self._active_matches:
             del self._active_matches[match.match_uid]
-            logger.info(f"Матч {match.match_uid} удален из списка активных.")
-            
-        with self._get_session() as session:
-            orm_match = session.query(MatchORM).get(match_db_id)
-            return self.orm_to_dto(orm_match)
+            logger.info(f"Активный матч {match.match_uid} удален из памяти после сохранения в БД. _active_matches: {self._active_matches}") # <--- Добавлено логирование
+        else:
+            logger.warning(f"Match {match.match_uid} not found in _active_matches during save_finished_match.") # <--- Добавлено логирование
+        
+        return saved_match_dto

@@ -30,6 +30,8 @@ class ViewDataHandler:
                     "sets": match_dto.score.get("sets", [0, 0]),
                     "games": match_dto.score.get("games", [0, 0]),
                     "points": match_dto.score.get("points", ["0", "0"]),
+                    "tiebreak_points": match_dto.score.get("tiebreak_points", [0, 0]),  # Добавлено
+                    "is_tiebreak": match_dto.score.get("is_tiebreak", False),  # Добавлено
                 }
                 self.logger.debug(f"Parsed score data: {score_data}")
             else:

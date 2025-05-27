@@ -48,7 +48,7 @@ class MatchDataHandler:
         match_instance = self.repository.get_active_match_by_uuid(match_uuid)
         if match_instance:
             self.logger.debug(f"Active match found for UUID: {match_uuid}")
-            return MatchDTO.from_match(match_instance)
+            return match_instance.to_live_dto() # Исправлено: MatchDTO.from_match на match_instance.to_live_dto()
         self.logger.debug(f"No active match found for UUID: {match_uuid}. Attempting to fetch from DB.")
         # Попытка загрузить из БД, если не найден в активных (например, завершенный матч)
         # Это предполагает, что в репозитории есть метод для получения матча из БД по UUID

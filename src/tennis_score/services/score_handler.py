@@ -130,7 +130,19 @@ class ScoreHandler:
             # Записываем счет сета в историю перед сбросом
             player1_games_in_set = 7 if player == "player1" else 6
             player2_games_in_set = 7 if player == "player2" else 6
-            match.add_completed_set_score(player1_games_in_set, player2_games_in_set)
+            
+            # Очки тай-брейка для обоих игроков
+            # Если player == "player1", то p1_tb_score = p_score (очки победителя), p2_tb_score = o_score (очки проигравшего)
+            # Если player == "player2", то p1_tb_score = o_score, p2_tb_score = p_score
+            p1_tb_final_score = p_score if player == "player1" else o_score
+            p2_tb_final_score = o_score if player == "player1" else p_score
+
+            match.add_completed_set_score(
+                player1_games_in_set,
+                player2_games_in_set,
+                p1_tb_final_score,
+                p2_tb_final_score,
+            )
 
             player_score["sets"] += 1 # Увеличиваем счет сетов
             player_score["games"] = 0
@@ -178,9 +190,9 @@ class ScoreHandler:
             )
             # Записываем счет сета в историю перед сбросом
             if player_key == "player1":
-                match.add_completed_set_score(pg, og)
+                match.add_completed_set_score(pg, og, None, None) # Тай-брейка не было
             else: # player_key == "player2"
-                match.add_completed_set_score(og, pg)
+                match.add_completed_set_score(og, pg, None, None) # Тай-брейка не было
             
             player_score["sets"] += 1
             player_score["games"] = 0
