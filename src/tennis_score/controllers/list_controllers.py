@@ -31,10 +31,15 @@ def list_matches_controller(params: dict) -> dict:
         logger.debug("Page parameter not found. Using page 1.")
 
     per_page = 4  # Можно сделать настраиваемым
-    logger.debug(f"Requesting matches for page: {page}, per_page: {per_page}")
+    filter_query_list = params.get("filter_query")
+    filter_query = filter_query_list[0] if filter_query_list and filter_query_list[0].strip() else None
+    if filter_query:
+        logger.debug(f"Applying filter: '{filter_query}'")
+    
+    logger.debug(f"Requesting matches for page: {page}, per_page: {per_page}, filter: '{filter_query}'")
 
     # Получаем список матчей и общее количество страниц через сервис
-    matches, total_pages = match_service.data_handler.list_matches_paginated(page, per_page)
+    matches, total_pages = match_service.data_handler.list_matches_paginated(page, per_page, filter_query)
 
     # Возвращаем контекст с данными о матчах и параметрами пагинации
     return make_response(
@@ -43,53 +48,9 @@ def list_matches_controller(params: dict) -> dict:
             "matches": matches,
             "page": page,
             "total_pages": total_pages,
+            "filter_query": filter_query if filter_query else "", # Для отображения в поле ввода
         },
     )
 
 
-def reset_match_controller(params: dict) -> dict:
-    """Контроллер для сброса счета матча по UUID.
-
-    Args:
-        params: параметры запроса, должен содержать 'match_uuid'
-
-    Returns:
-        dict: ответ с данными для шаблона match-score.html
-    """
-    logger = logging.getLogger("controller.reset")
-    logger.debug(f"Processing reset_match request with params: {params}")
-
-    match_uuid = params.get("match_uuid", [""])[0].strip()
-
-    if not match_uuid:
-        logger.warning("match_uuid not provided to reset_match_controller")
-        # Возвращаем на страницу нового матча с ошибкой
-        return make_response(
-            "new-match.html", {"error": "Match UUID is required to reset. Please start a new match."}
-        )
-
-    # Сбрасываем счет матча через сервис, используя UUID
-    match_service.reset_match_score(match_uuid)
-    logger.info(f"Match {match_uuid} has been reset")
-
-    # После сброса получаем обновленные данные матча по UUID
-    match_dto = match_service.get_match_data_by_uuid(match_uuid)
-
-    if not match_dto:
-        logger.error(f"Failed to get match_dto for UUID {match_uuid} after reset.")
-        return make_response(
-            "match-score.html",
-            {
-                "error": f"Could not retrieve data for match {match_uuid} after reset.",
-                "match_uuid": match_uuid,
-            },
-            status="404 Not Found",
-        )
-
-    # Подготавливаем данные для отображения
-    # prepare_match_view_data теперь получает всю необходимую информацию из DTO
-    view_data = match_service.prepare_match_view_data(match_dto)
-    view_data["match_uuid"] = match_uuid  # Убедимся, что UUID есть для шаблона
-    view_data["info"] = f"Счет матча {match_uuid} был сброшен."
-
-    return make_response("match-score.html", view_data)
+# Контроллер reset_match_controller будет перемещен в match_controllers.py

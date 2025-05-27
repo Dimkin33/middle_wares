@@ -67,6 +67,9 @@ class MatchDataHandler:
         self.logger.warning(f"Match with UUID {match_uuid} not found in active matches or DB.")
         return None
 
-    def list_matches_paginated(self, page: int = 1, per_page: int = 10) -> tuple[list[MatchDTO], int]:
-        """Получить список матчей с пагинацией (DTO, total_pages)."""
-        return self.repository.list_matches_paginated(page, per_page)
+    def list_matches_paginated(
+        self, page: int = 1, per_page: int = 10, filter_query: str | None = None
+    ) -> tuple[list[MatchDTO], int]:
+        """Получить список матчей с пагинацией (DTO, total_pages), опционально с фильтром."""
+        self.logger.debug(f"Listing matches for page {page}, per_page {per_page}, filter: '{filter_query}'")
+        return self.repository.list_matches_paginated(page, per_page, filter_query)

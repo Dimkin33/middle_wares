@@ -3,10 +3,11 @@
 import logging
 from urllib.parse import parse_qs
 
-from ..controllers.list_controllers import list_matches_controller, reset_match_controller
+from ..controllers.list_controllers import list_matches_controller
 from ..controllers.match_controllers import (
     match_score_controller,
     new_match_controller,
+    reset_match_controller,
     view_match_controller,
 )
 from ..controllers.view_controllers import TemplateViewController

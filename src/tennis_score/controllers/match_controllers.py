@@ -165,3 +165,45 @@ def view_match_controller(params: dict) -> dict:
     # Используем шаблон match-score.html для отображения деталей матча.
     # Этот шаблон уже умеет отображать счет, игроков и победителя.
     return make_response("match-score.html", view_data)
+
+def reset_match_controller(params: dict) -> dict:
+    """Контроллер для сброса счета матча по UUID.
+
+    Args:
+        params: параметры запроса, должен содержать 'match_uuid'
+
+    Returns:
+        dict: ответ с данными для шаблона match-score.html
+    """
+    logger = logging.getLogger("controller.reset") # Имя логгера изменено для соответствия
+    logger.debug(f"Processing reset_match request with params: {params}")
+
+    match_uuid = params.get("match_uuid", [""])[0].strip()
+
+    if not match_uuid:
+        logger.warning("match_uuid not provided to reset_match_controller")
+        return make_response(
+            "new-match.html", {"error": "Match UUID is required to reset. Please start a new match."}
+        )
+
+    match_service.reset_match_score(match_uuid)
+    logger.info(f"Match {match_uuid} has been reset")
+
+    match_dto = match_service.get_match_data_by_uuid(match_uuid)
+
+    if not match_dto:
+        logger.error(f"Failed to get match_dto for UUID {match_uuid} after reset.")
+        return make_response(
+            "match-score.html",
+            {
+                "error": f"Could not retrieve data for match {match_uuid} after reset.",
+                "match_uuid": match_uuid,
+            },
+            status="404 Not Found",
+        )
+
+    view_data = match_service.prepare_match_view_data(match_dto)
+    view_data["match_uuid"] = match_uuid
+    view_data["info"] = f"Счет матча {match_uuid} был сброшен."
+
+    return make_response("match-score.html", view_data)

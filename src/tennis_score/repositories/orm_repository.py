@@ -2,8 +2,8 @@
 import logging
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, or_  # Добавлен or_
+from sqlalchemy.orm import aliased, sessionmaker  # Добавлен aliased
 
 from ..dto.match_dto import MatchDTO
 from ..model.match import Match
@@ -59,21 +59,53 @@ class OrmMatchRepository:
             logger.info(f"Добавлен матч: {match}")
             return match.id
 
-    def list_matches_paginated(self, page: int = 1, per_page: int = 10) -> tuple[list[MatchDTO], int]:
+    def list_matches_paginated(
+        self, page: int = 1, per_page: int = 10, filter_query: str | None = None
+    ) -> tuple[list[MatchDTO], int]:
         import math
-        """Получить список матчей с пагинацией и общее число страниц."""
+        """Получить список матчей с пагинацией и общее число страниц, с опциональной фильтрацией."""
         offset = (page - 1) * per_page
         with self._get_session() as session:
-            total_matches = session.query(MatchORM).count()
-            total_pages = math.ceil(total_matches / per_page) if per_page else 1
-            matches = (
-                session.query(MatchORM)
-                .order_by(MatchORM.id.desc())
-                .offset(offset)
-                .limit(per_page)
-                .all()
-            )
-            return [self.orm_to_dto(m) for m in matches], total_pages
+            base_query = session.query(MatchORM)
+
+            if filter_query:
+                # Используем псевдонимы для таблицы PlayerORM, чтобы различать player1 и player2
+                player1_alias = aliased(PlayerORM)
+                player2_alias = aliased(PlayerORM)
+                
+                query_with_filter = base_query.join(
+                    player1_alias, MatchORM.player1_id == player1_alias.id
+                ).join(
+                    player2_alias, MatchORM.player2_id == player2_alias.id
+                ).filter(
+                    or_(
+                        player1_alias.name.ilike(f"%{filter_query}%"),
+                        player2_alias.name.ilike(f"%{filter_query}%")
+                    )
+                )
+                # Считаем общее количество отфильтрованных матчей
+                total_matches = query_with_filter.count()
+                
+                # Применяем пагинацию к отфильтрованному запросу
+                matches_orm = (
+                    query_with_filter.order_by(MatchORM.id.desc())
+                    .offset(offset)
+                    .limit(per_page)
+                    .all()
+                )
+            else:
+                # Если фильтра нет, считаем все матчи и применяем пагинацию к базовому запросу
+                total_matches = base_query.count()
+                matches_orm = (
+                    base_query.order_by(MatchORM.id.desc())
+                    .offset(offset)
+                    .limit(per_page)
+                    .all()
+                )
+
+            total_pages = math.ceil(total_matches / per_page) if per_page > 0 else 1
+            
+            return [self.orm_to_dto(m) for m in matches_orm], total_pages
 
     def get_or_create_player_by_name(self, name: str) -> int:
         """Получить ID игрока по имени или создать, если не найден."""
