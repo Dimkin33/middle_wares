@@ -1,4 +1,5 @@
-"""Utility functions for tennis_score application."""
+"""Компоненты для формирования HTTP-ответов."""
+
 
 def make_response(
     template: str | None, context: dict | None = None, status: str = "200 OK"

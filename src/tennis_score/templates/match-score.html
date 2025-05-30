@@ -1,0 +1,103 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Scoreboard | Match Score</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">    <link rel="stylesheet" href="static/css/style.css">
+
+    <script src="static/js/app.js"></script>
+</head>
+<body>
+<header class="header">
+    {% include 'nav.html' %}
+</header>
+<main>
+    <div class="container">
+        <h1>Current match</h1>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        <div class="current-match-image"></div>
+        <section class="score">
+            {% if score is string %}
+                            <div class="final-score">
+                                {{ player_one_name or 'Player 1' }} vs {{ player_two_name or 'Player 2' }}<br>
+                                <span class="score-value">{{ score }}</span>
+                                {% if winner %}
+                                    <br>Победитель: <span class="winner-name">{{ winner }}</span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+            <table class="table">
+                <thead class="result">
+                <tr>
+                    <th class="table-text">Player</th>
+                    <th class="table-text">Sets</th>
+                    <th class="table-text">Games</th>
+                    <th class="table-text">Points / Tiebreak</th> {# Изменен заголовок #}
+                    <th class="table-text">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="player1">
+                    <td class="table-text">{{ player_one_name or 'Player 1' }}</td>
+                    <td class="table-text">{{ score.sets[0] }}</td>
+                    <td class="table-text">{{ score.games[0] }}</td>
+                    <td class="table-text">
+                        {% if score.is_tiebreak %}
+                            {{ score.tiebreak_points[0] }}
+                        {% else %}
+                            {{ score.points[0] }}
+                        {% endif %}
+                    </td>
+                    <td class="table-text">
+                        <form method="post" action="/match-score">
+                            <input type="hidden" name="player" value="player1">
+                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}"> <!-- Added match_uuid -->
+                            <button class="score-btn" type="submit" {% if winner %}disabled{% endif %}>Score</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr class="player2">
+                    <td class="table-text">{{ player_two_name or 'Player 2' }}</td>
+                    <td class="table-text">{{ score.sets[1] }}</td>
+                    <td class="table-text">{{ score.games[1] }}</td>
+                    <td class="table-text">
+                        {% if score.is_tiebreak %}
+                            {{ score.tiebreak_points[1] }}
+                        {% else %}
+                            {{ score.points[1] }}
+                        {% endif %}
+                    </td>
+                    <td class="table-text">
+                        <form method="post" action="/match-score">
+                            <input type="hidden" name="player" value="player2">
+                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}"> <!-- Added match_uuid -->
+                            <button class="score-btn" type="submit" {% if winner %}disabled{% endif %}>Score</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            {% if info %}
+            <div class="info-message">{{ info }}</div>
+            {% endif %}
+            {% endif %}
+        </section>
+        <form method="post" action="/reset-match" style="margin-top: 20px; text-align: center;">
+            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
+            <button type="submit" class="btn reset-match-btn" {% if not match_uuid %}disabled{% endif %}>Reset Match Score</button>
+        </form>
+    </div>
+</main>
+
+<footer>
+    {% include 'footer.html' %}
+</footer>
+</body>
+</html>

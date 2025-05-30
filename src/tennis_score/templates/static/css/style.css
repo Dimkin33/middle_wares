@@ -1,0 +1,520 @@
+/* =================== */
+/*        RESET        */
+/* =================== */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* =================== */
+/*      VARIABLES      */
+/* =================== */
+:root {
+  --primary-color: #42a7f5;
+  --light-gray: #dddddd;
+  --border-radius: 18px;
+  --font-main: "Poppins", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+  --font-heading: 37px;
+  --font-body: 21px;
+  --font-small: 16px;
+}
+
+/* =================== */
+/*     BASE STYLES     */
+/* =================== */
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+  font-family: var(--font-main);
+  font-weight: 300;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+span {
+  font-size: 19px;
+}
+
+main {
+  min-height: calc(100vh - 104px);
+}
+
+.container {
+  margin: auto;
+  padding-top: 50px;
+  width: 75%;
+}
+
+body h1 {
+  font-size: var(--font-heading);
+  font-weight: bold;
+}
+
+p {
+  font-size: var(--font-body);
+}
+
+/* =================== */
+/*      NAVIGATION     */
+/* =================== */
+header {
+  height: 50px;
+}
+
+.nav-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 35px;
+  border-bottom: 2px solid #ccc;
+  align-items: center;
+  background: #fff;
+  position: relative;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.logo-text {
+  margin-left: 15px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  font-size: 19px;
+  color: #000;
+  text-decoration: none;
+}
+
+.nav-link + .nav-link {
+  margin-left: 20px;
+}
+
+.nav-toggle {
+  display: none;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+/* =================== */
+/*        FOOTER       */
+/* =================== */
+footer {
+  display: flex;
+  justify-content: space-between;
+  height: 50px;
+  padding: 0 35px;
+  border-top: 2px solid #ccc;
+  align-items: center;
+}
+
+/* =================== */
+/*     COMPONENTS      */
+/* =================== */
+.center {
+  margin: 0 auto;
+}
+
+.btn {
+  border: none;
+  width: 100%;
+  border-radius: var(--border-radius);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.view-results {
+  background-color: #e7e7e7;
+  padding: 9px 0;
+  margin-top: 10px; /* Добавлен верхний отступ */
+  margin-bottom: 10px; /* Добавлен нижний отступ */
+}
+
+.start-match {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 9px 0;
+  margin-top: 10px; /* Добавлен верхний отступ */
+  margin-bottom: 10px; /* Добавлен нижний отступ */
+}
+
+/* =================== */
+/*    WELCOME IMAGE    */
+/* =================== */
+.welcome-image {
+  border-radius: 30px;
+  margin-top: 20px;
+  background: url('../images/welcome_image.png') center / cover no-repeat;
+  min-height: 50vh;
+}
+
+/* =================== */
+/*     NEW MATCH       */
+/* =================== */
+.new-match-image {
+  border-radius: 30px;
+  margin: 20px 0;
+  background: url('../images/racket.png') center / cover no-repeat;
+  height: 503px;
+}
+
+.form-container {
+  width: 40%;
+  /* Можно добавить display: flex; flex-direction: column; gap: 15px; 
+     если все дочерние элементы должны иметь одинаковый отступ и это не сломает другую логику. */
+}
+
+.label-player {
+  display: block;
+  margin: 20px 0 3px;
+}
+
+.input-player {
+  width: 100%;
+  padding: 12px 10px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  margin-bottom: 15px; /* Добавлен нижний отступ для инпутов */
+}
+
+.input-player::placeholder {
+  color: var(--primary-color);
+}
+
+.form-button,
+.btn-reset {
+  box-sizing: border-box; /* Added for consistent height calculation */
+  width: 100%; /* Changed from 100% to allow natural sizing in flex container */
+  display: block; /* Flex item behavior will override this, but good for fallback */
+  padding: 12px 10px;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+  color: #fff;
+  text-decoration: none; /* Добавлено для удаления подчеркивания у ссылок с этим классом */
+  text-align: center; /* Добавлено для центрирования текста */
+  /* margin-top: 20px; */ /* Removed as parent .input-container uses gap for spacing */
+  height: 50px; /* Explicit height */
+  line-height: 24px; /* To vertically center text (height - padding*2 - border*2) */
+}
+
+/* =================== */
+/*   CURRENT MATCH     */
+/* =================== */
+.current-match-image {
+  border-radius: 30px;
+  margin-top: 20px;
+  background: url('../images/scorekeeper.png') center / cover no-repeat;
+  min-height: 30vh;
+}
+
+.score-container {
+  position: relative;
+}
+
+.score-text {
+  font-size: 51px;
+  color: #fff;
+}
+
+.score {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  margin-top: 35px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: 5px;
+  border-bottom: 1px solid #dddddd;
+  vertical-align: middle; /* Добавлено для вертикального выравнивания по центру */
+}
+
+/* Horizontal alignment and padding for match-score table */
+/* Player column (1st) will remain text-align: left (inherited from .table) */
+/* Sets, Games, Points, Actions columns (2nd, 3rd, 4th, 5th) */
+.table th:nth-child(n+2),
+.table td:nth-child(n+2) {
+  text-align: center;
+  padding-left: 15px; /* Increased horizontal padding for these columns */
+  padding-right: 15px; /* Increased horizontal padding for these columns */
+}
+
+.result th {
+  font-weight: 400;
+  padding-left: 10px;
+}
+
+.player1,
+.player2 {
+  font-size: 40px;
+}
+
+.player1 td,
+.player2 td {
+  /* width: 5%; */ /* Удалено для автоматического определения ширины */
+  padding: 60px 15px; /* Adjusted horizontal padding from 5px to 15px */
+  font-family: var(--font-mono);
+  font-weight: 300;
+}
+
+/* Override padding for the Actions column cells in player rows to align with header */
+.player1 td:nth-child(5),
+.player2 td:nth-child(5) {
+  padding: 5px 15px; /* Match vertical padding of th, horizontal padding from td:nth-child(n+2) */
+}
+
+/* Добавлены стили для формы внутри ячейки таблицы */
+.table td form {
+  margin: 0; /* Убираем возможные отступы по умолчанию у формы */
+  display: inline-block; /* Позволяет форме лучше реагировать на vertical-align ячейки */
+}
+
+.score-btn {
+  font-size: 20px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 15px;
+  padding: 12px 30px;
+  /* margin-right: 30px; */ /* Removed for better centering via text-align on parent td */
+}
+
+/* =================== */
+/*    FINAL SCORE      */
+/* =================== */
+.final-score {
+  background-color: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 30px;
+  font-size: 24px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-family: "Roboto", sans-serif;
+}
+
+.score-value {
+  margin-top: 10px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.winner-name {
+  font-weight: bold;
+  color: #27ae60;
+}
+
+/* =================== */
+/*  FINISHED MATCHES   */
+/* =================== */
+.input-container {
+  display: flex;
+  align-items: center; /* Добавлено для вертикального выравнивания */
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: auto;
+  gap: 10px; /* Добавлено для расстояния между элементами */
+}
+
+.input-filter {
+  box-sizing: border-box; /* Added for consistent height calculation */
+  font-size: 24px; /* Match .btn-reset font-size */
+  border: 1px solid #ccc; /* Match .btn-reset border for consistent height */
+  width: 200%; /* Changed from 100% to allow natural sizing in flex container */
+  flex-grow: 1;
+  min-width: 0; /* Allow shrinking in flex container */
+  border-radius: 15px;
+  background-color: var(--light-gray);
+  padding: 12px 10px; /* Match .btn-reset padding and content alignment */
+  color: #000;
+  height: 50px; /* Explicit height to match .btn-reset */
+}
+
+.table-matches {
+  width: 100%;
+  margin: 40px 0 20px;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+.table-matches th {
+  background: var(--light-gray);
+  font-weight: bold;
+}
+
+.table-matches td {
+  width: 33%;
+  padding: 31px 0;
+  text-align: center;
+  border-bottom: 1px solid #dddddd;
+}
+
+.winner-name-td {
+  background-color: var(--light-gray);
+  display: block;
+  width: 38%;
+  margin: 0 auto;
+  border-radius: var(--border-radius);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.prev,
+.next,
+.num-page {
+  font-size: 24px;
+  color: #000;
+  text-decoration: none;
+}
+
+.num-page.current {
+  font-weight: bold;
+}
+
+/* =================== */
+/*   RESPONSIVE STYLE  */
+/* =================== */
+@media (max-width: 992px) {
+  .container {
+    width: 90%;
+  }
+
+  .form-container {
+    width: 50%;
+  }
+
+  .nav-link {
+    font-size: 17px;
+  }
+
+  body h1 {
+    font-size: 32px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  .nav-header,
+  footer {
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .form-container {
+    width: 80%;
+  }
+
+  .nav-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-link + .nav-link {
+    margin-left: 0;
+  }
+
+  .nav-toggle {
+    display: block;
+    margin-left: auto;
+  }
+
+  .input-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-container {
+    width: 100%;
+  }
+
+  .nav-link {
+    font-size: var(--font-small);
+  }
+
+  body h1 {
+    font-size: 28px;
+  }
+
+  p {
+    font-size: var(--font-small);
+  }
+
+  .nav-header {
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    padding: 10px 15px;
+    box-sizing: border-box;
+  }
+
+  footer {
+    padding: 0 15px;
+    flex-direction: column;
+    text-align: center;
+  }
+}

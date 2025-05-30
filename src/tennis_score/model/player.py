@@ -1,19 +1,15 @@
-"""Player model for tennis score application."""
-
-import itertools
-
-from ..dto.player_dto import PlayerDTO
-
-players_dict = {}
+"""Модель игрока в теннисном приложении."""
 
 
-class Player:  # noqa: D101
-    _id_counter = itertools.count(1)
+class Player:
+    """Модель игрока в теннисном приложении.
 
-    def __init__(self, name):
-        self.id = next(Player._id_counter)
-        self.name = name
-        players_dict[self.id] = self.name
-
-    def to_dto(self):
-        return PlayerDTO(id=self.id, name=self.name)
+    Attributes:
+        id (int | None): Уникальный идентификатор игрока, задаётся базой данных.
+        name (str): Имя игрока (уникальное).
+    """
+    def __init__(self, name: str, id: int | None = None):
+        if not name:
+            raise ValueError("Имя игрока не может быть пустым")
+        self.id: int | None = id
+        self.name: str = name

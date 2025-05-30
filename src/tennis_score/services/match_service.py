@@ -1,295 +1,98 @@
-﻿"""Сервис для работы с теннисными матчами."""
-import json  # noqa: D100
+﻿"""Фасад для работы с матчами: только координация обработчиков, без бизнес-логики."""
+
 import logging
 
+from ..core.presentation import ViewDataHandler
 from ..dto.match_dto import MatchDTO
-from ..repositories.match_repository import MatchRepository
+from ..repositories.orm_repository import OrmMatchRepository
+from .match_data_handler import MatchDataHandler
+from .score_handler import ScoreHandler
 
 
 class MatchService:
-    """Сервис для работы с теннисными матчами.
-    Отвечает за бизнес-логику и преобразование данных между моделями и DTO.
-    """  # noqa: D205
-
+    """Фасад для работы с матчами: координирует обработчики, не реализует бизнес-логику."""
     def __init__(self):
         self.logger = logging.getLogger("service")
-        self.repository = MatchRepository()
-        self.logger.debug("MatchService initialized with repository")
+        self.repository = OrmMatchRepository()  # Используем ORM-репозиторий
+        self.score_handler = ScoreHandler()
+        self.view_handler = ViewDataHandler()
+        self.data_handler = MatchDataHandler(self.repository)
+        self.logger.debug("MatchService initialized with ORM repository and handlers")
 
     def create_match(self, player_one_name: str, player_two_name: str) -> MatchDTO:
-        """Создание нового матча."""
-        self.logger.debug(f"Creating new match: {player_one_name} vs {player_two_name}")
-        match = self.repository.create_match(player_one_name, player_two_name)
-        match_dto = match.get_match_data()
-        self.logger.info(f"New match created with UUID: {match_dto.uuid}")
-        return match_dto
+        return self.data_handler.create_match(player_one_name, player_two_name)
 
-    def get_current_match_data(self) -> MatchDTO | None:
-        """Получение данных текущего матча."""
-        match = self.repository.get_current_match()
-        return match.get_match_data() if match else None
+    def get_match_data_by_uuid(self, match_uuid: str) -> MatchDTO | None:
+        """Получить данные матча по UUID."""
+        return self.data_handler.get_match_data_by_uuid(match_uuid)
 
-    def update_current_match_score(self, player: str) -> MatchDTO | None:
-        """Обновление счета в текущем матче.
-
-        Args:
-            player: идентификатор игрока ("player1" или "player2")
-
-        Returns:
-            MatchDTO: обновленные данные матча или None, если матч не найден
-        """
-        match = self.repository.get_current_match()
+    def update_match_score(self, match_uuid: str, player: str) -> MatchDTO | None:
+        """Обновить счет указанного матча для указанного игрока."""
+        match = self.repository.get_active_match_by_uuid(match_uuid)
         if not match:
-            self.logger.warning("No active match found to update score")
+            self.logger.warning(f"No active match found with UUID {match_uuid} to update score")
             return None
 
-        # Проверка валидности входящих данных
+        # Убедимся, что ID игроков установлены в объекте Match.
+        # Используем getattr для безопасной проверки, существуют ли атрибуты.
+        player_one_id_exists = getattr(match, 'player_one_id', None) is not None
+        player_two_id_exists = getattr(match, 'player_two_id', None) is not None
+
+        if not player_one_id_exists or not player_two_id_exists:
+            self.logger.debug(
+                f"Player IDs not set for match {match.match_uid}. Fetching/creating and setting them."
+            )
+            player1_id_db = self.repository.get_or_create_player_by_name(match.player_one_name)
+            player2_id_db = self.repository.get_or_create_player_by_name(match.player_two_name)
+            match.set_player_ids(player1_id_db, player2_id_db)
+            # Объект match был изменен, current_match в репозитории - это ссылка на этот же объект.
+
         if player not in ["player1", "player2"]:
             self.logger.error(f"Invalid player identifier: {player}")
-            return match.get_match_data()
-
-        # Проверка, завершен ли матч
-        if match.winner:
+            return match.to_live_dto() # ID игроков теперь точно будут в DTO
+        if match.winner: # Если победитель уже был определен ранее
             self.logger.warning("Attempted to update score for a completed match")
-            return match.get_match_data()
+            return match.to_final_dto()
 
-        # Получаем текущие счета для игроков
         player_score = match.scores[player]
         opponent = "player2" if player == "player1" else "player1"
         opponent_score = match.scores[opponent]
-
         try:
-            # Применяем логику обновления счета в зависимости от режима игры
             if match.is_tiebreak:
-                self._update_tiebreak_score(match, player, player_score, opponent_score)
+                self.score_handler.update_tiebreak_score(match, player, player_score, opponent_score)
             else:
-                self._update_regular_score(match, player, player_score, opponent_score)
+                self.score_handler.update_regular_score(match, player, player_score, opponent_score)
+            
+            # Логика определения победителя матча и сохранения перенесена в ScoreHandler.
+            # Вызывается внутри update_regular_score/update_tiebreak_score -> check_set_win 
+            # -> _check_and_set_match_winner.
 
-            # Проверяем, выиграл ли игрок матч
-            if player_score["sets"] >= 2:
-                match.winner = match.players[player].id
-                self.logger.info(f"Match won by {player} with ID {match.winner}")
+            if match.winner: # Проверяем, определен ли победитель матча в ScoreHandler
+                # Если победитель определен, значит матч завершен.
+                # ID игроков уже установлены в объекте match ранее.
+                self.repository.save_finished_match(match)
+                self.logger.info(f"Match finished and saved: {match.match_uid}. Winner: {match.winner}")
+                return match.to_final_dto()
 
-            # Сохраняем обновленный матч через репозиторий
-            self.repository.current_match = match
-
-            return match.get_match_data()
+            return match.to_live_dto()
         except Exception as e:
-            self.logger.error(f"Error updating score: {e}")
-            return match.get_match_data()
+            self.logger.error(f"Error updating score: {e}", exc_info=True)
+            # Возвращаем DTO с актуальными (возможно, только что установленными) ID
+            return match.to_live_dto() if match else None
 
-    def reset_current_match(self) -> None:
-        """Сброс текущего матча."""
-        match = self.repository.get_current_match()
+    def reset_match_score(self, match_uuid: str) -> None:
+        """Сбросить счет указанного матча."""
+        match = self.repository.get_active_match_by_uuid(match_uuid)
         if not match:
-            self.logger.warning("No active match to reset")
+            self.logger.warning(f"No active match with UUID {match_uuid} to reset")
             return
-
-        # Сбрасываем счет матча до начального состояния
-        match.scores = {
-            "player1": {
-                "sets": 0,
-                "games": 0,
-                "points": 0,
-                "advantage": False,
-                "tiebreak_points": 0,
-            },
-            "player2": {
-                "sets": 0,
-                "games": 0,
-                "points": 0,
-                "advantage": False,
-                "tiebreak_points": 0,
-            },
-        }
-        match.is_tiebreak = False
-        match.winner = None
-        
-        # Сохраняем обновленный матч через репозиторий
-        self.repository.current_match = match
-        self.logger.info("Match reset completed")
-
-    def _update_regular_score(self, match, player, player_score, opponent_score):
-        """Обновляет счёт в обычной игре (не тай-брейк).
-
-        Args:
-            match: объект матча
-            player: идентификатор игрока
-            player_score: счет игрока
-            opponent_score: счет соперника
-        """
-        score = player_score["points"]
-        opponent_points = opponent_score["points"]
-        
-        self.logger.debug(
-            f"Updating regular score: player {player} has {match.score_values[score]} points, "
-            f"opponent has {match.score_values[opponent_points]} points"
-        )
-
-        if player_score["advantage"]:
-            # Игрок с преимуществом набирает еще одно очко = выигрывает гейм
-            self.logger.info(f"Player {player} with advantage scores a point and wins the game")
-            player_score["advantage"] = False
-            opponent_score["advantage"] = False
-            player_score["games"] += 1
-            player_score["points"] = 0
-            opponent_score["points"] = 0
-            self._check_set_win(match, player_score, opponent_score)
-        elif score < len(match.score_values) - 1:
-            # Обычное увеличение очков (0->15->30->40)
-            old_points = match.score_values[score]
-            player_score["points"] += 1
-            new_points = match.score_values[player_score["points"]]
-            self.logger.debug(f"Player {player} scores: {old_points} -> {new_points}")
-        elif score == len(match.score_values) - 1:
-            # Игрок имеет 40 очков
-            if opponent_points == len(match.score_values) - 1:
-                # Соперник тоже имеет 40 очков
-                if opponent_score["advantage"]:
-                    # Соперник имел преимущество, теперь оно снимается (равенство)
-                    self.logger.info(f"Player {player} scores: advantage removed, now DEUCE")
-                    opponent_score["advantage"] = False
-                else:
-                    # Игрок получает преимущество
-                    self.logger.info(f"Player {player} scores and gets ADVANTAGE")
-                    player_score["advantage"] = True
-            else:
-                # Соперник имеет меньше 40 очков, игрок выигрывает гейм
-                self.logger.info(f"Player {player} scores at 40 and wins the game")
-                player_score["games"] += 1
-                player_score["points"] = 0
-                opponent_score["points"] = 0
-                opponent_score["advantage"] = False
-                self._check_set_win(match, player_score, opponent_score)
-
-    def _update_tiebreak_score(self, match, player, player_score, opponent_score):
-        """Обновляет счёт в тай-брейке.
-
-        Args:
-            match: объект матча
-            player: идентификатор игрока
-            player_score: счет игрока
-            opponent_score: счет соперника
-        """
-        # Добавляем подробное логирование 
-        self.logger.debug(
-            f"Updating tiebreak: player {player} has {player_score['tiebreak_points']} points, "
-            f"opponent has {opponent_score['tiebreak_points']} points"
-        )
-        
-        player_score["tiebreak_points"] += 1
-        points = player_score["tiebreak_points"]
-        self.logger.debug(f"Player {player} scores in tiebreak: now {points} points")
-        
-        # Проверка победы: 7 очков и преимущество в 2
-        win_condition = (
-            player_score["tiebreak_points"] >= 7 and 
-            player_score["tiebreak_points"] >= opponent_score["tiebreak_points"] + 2
-        )
-        
-        if win_condition:
-            p_score = player_score["tiebreak_points"]
-            o_score = opponent_score["tiebreak_points"]
-            self.logger.info(f"Player {player} wins tiebreak: {p_score}-{o_score}")
-            player_score["sets"] += 1
-            player_score["games"] = 0
-            opponent_score["games"] = 0
-            player_score["tiebreak_points"] = 0
-            opponent_score["tiebreak_points"] = 0
-            player_score["points"] = 0
-            opponent_score["points"] = 0
-            match.is_tiebreak = False
-
-    def _check_set_win(self, match, player_score, opponent_score):
-        """Проверяет, выиграл ли игрок сет, и запускает тай-брейк при 6:6.
-
-        Args:
-            match: объект матча
-            player_score: счет игрока
-            opponent_score: счет соперника
-        """
-        self.logger.debug(
-            f"Checking set win: games {player_score['games']}-{opponent_score['games']}"
-        )
-        
-        if player_score["games"] >= 6 and player_score["games"] >= opponent_score["games"] + 2:
-            # Игрок выиграл сет с преимуществом в 2 или более гейма
-            self.logger.info(
-                f"Set won with score {player_score['games']}-{opponent_score['games']}"
-            )
-            player_score["sets"] += 1
-            player_score["games"] = 0
-            opponent_score["games"] = 0
-            player_score["points"] = 0
-            opponent_score["points"] = 0
-        elif player_score["games"] == 6 and opponent_score["games"] == 6:
-            # Ничья 6:6, начинаем тай-брейк
-            self.logger.info("Tiebreak started at 6-6")
-            match.is_tiebreak = True
-            player_score["tiebreak_points"] = 0
-            opponent_score["tiebreak_points"] = 0
-            player_score["points"] = 0
-            opponent_score["points"] = 0
+        self.score_handler.reset_match_score(match)
+        self.logger.info(f"Match {match_uuid} reset completed")
 
     def prepare_match_view_data(
         self,
         match_dto: MatchDTO | None,
-        player_one_name_arg: str | None = None,
-        player_two_name_arg: str | None = None,
     ) -> dict:
-        """Подготовка данных для отображения матча."""
-        # Добавляем логирование вызова
-        self.logger.debug("Preparing match view data")
-        
-        # Инициализация данных по умолчанию
-        score_data = {"sets": [0, 0], "games": [0, 0], "points": ["0", "0"]}
-
-        # Получение актуального матча из репозитория
-        current_match = self.repository.get_current_match()
-
-        # Получаем имена игроков
-        player1_name = (
-            player_one_name_arg
-            if player_one_name_arg is not None
-            else (getattr(current_match, "player_one_name", "") if current_match else "")
+        return self.view_handler.prepare_match_view_data(
+            match_dto
         )
-        player2_name = (
-            player_two_name_arg
-            if player_two_name_arg is not None
-            else (getattr(current_match, "player_two_name", "") if current_match else "")
-        )
-        
-        self.logger.debug(f"Display names: {player1_name} vs {player2_name}")
-
-        error_message = None
-
-        # Если есть данные о матче, парсим JSON со счетом
-        if match_dto and match_dto.score:
-            try:
-                full_score = json.loads(match_dto.score)
-                # Извлекаем только используемые поля
-                score_data = {
-                    "sets": full_score.get("sets", [0, 0]),
-                    "games": full_score.get("games", [0, 0]),
-                    "points": full_score.get("points", ["0", "0"]),
-                }
-                self.logger.debug(f"Parsed score data: {score_data}")
-            except json.JSONDecodeError:
-                error_message = "Error parsing match score data"
-                self.logger.error("Failed to parse JSON score data")
-        else:
-            error_message = "Match data is unavailable."
-            self.logger.warning("No match data available for display")
-
-        # Оптимизированный контекст для шаблона
-        context = {
-            "score": score_data,
-            "player_one_name": player1_name,
-            "player_two_name": player2_name,
-        }
-
-        # Добавляем сообщение об ошибке, только если оно есть
-        if error_message:
-            context["error"] = error_message
-
-        return context
