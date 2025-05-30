@@ -10,7 +10,7 @@
 #   universal: false
 
 -e file:.
-alembic==1.15.2
+alembic==1.16.1
     # via middle-wares
 greenlet==3.2.2
     # via sqlalchemy
@@ -21,6 +21,10 @@ mako==1.3.10
 markupsafe==3.0.2
     # via jinja2
     # via mako
+psycopg2-binary==2.9.10
+    # via middle-wares
+python-dotenv==1.1.0
+    # via middle-wares
 ruff==0.11.9
 sqlalchemy==2.0.41
     # via alembic

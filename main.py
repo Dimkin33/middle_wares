@@ -41,6 +41,7 @@ logging.getLogger('repository').setLevel(logging.DEBUG)
 logging.getLogger('core').setLevel(logging.DEBUG)
 logging.getLogger('presentation').setLevel(logging.DEBUG)
 
-
-serve(app, host='127.0.0.1', port=8080)
+if __name__ == "__main__":
+    # Запуск приложения с помощью Waitress
+    serve(app, host='127.0.0.1', port=8080)
 

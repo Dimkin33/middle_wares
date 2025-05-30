@@ -1,6 +1,7 @@
-"""Репозиторий для работы с матчами и игроками через ORM (SQLite)."""
+"""Репозиторий для работы с матчами и игроками через ORM (PostgreSQL)."""
 import logging
 import math
+import os  # Добавлено для доступа к переменным окружения
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine  # Удален or_
@@ -15,9 +16,12 @@ logger = logging.getLogger("orm")
 logging.basicConfig(level=logging.INFO)
 
 class OrmMatchRepository:
-    """Репозиторий для работы с матчами и игроками через ORM (SQLite)."""
-    def __init__(self, db_url: str = "sqlite:///tennis_score.db"):
-        self.engine = create_engine(db_url, echo=False)
+    """Репозиторий для работы с матчами и игроками через ORM (PostgreSQL)."""
+    def __init__(self, db_url: str | None = None):
+        effective_db_url = db_url or os.getenv("DATABASE_URL", "postgresql+psycopg2://tennis_user:tennis_password@localhost:5432/tennis_db")
+        if not effective_db_url:
+            raise ValueError("DATABASE_URL must be set as an environment variable or passed as an argument.")
+        self.engine = create_engine(effective_db_url, echo=False)
         self.Session = sessionmaker(bind=self.engine)
         self._active_matches: dict[str, Match] = {} # Хранилище для активных матчей (не сохраненных в БД)
 
