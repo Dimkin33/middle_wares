@@ -34,13 +34,10 @@ class MatchDataHandler:
         # return match_dto
         match_instance: Match = self.repository.create_match(player_one_name, player_two_name)
         # match_dto = MatchDTO.from_match(match_instance)  # Преобразование Match в MatchDTO <-- ОШИБКА ЗДЕСЬ
-        match_dto = match_instance.to_live_dto() # Получаем DTO из объекта Match
+        # Получаем DTO из объекта Match
+        match_dto = match_instance.to_live_dto()
         self.logger.info(f"New match created with UUID: {match_dto.uuid}")
         return match_dto
-
-    # def get_current_match_data(self) -> MatchDTO | None:
-    #     """Вернуть текущий матч из памяти, если есть."""
-    #     return self._current_match_dto
 
     def get_match_data_by_uuid(self, match_uuid: str) -> MatchDTO | None:
         """Вернуть данные матча по UUID из активных матчей."""
@@ -48,9 +45,11 @@ class MatchDataHandler:
         match_instance = self.repository.get_active_match_by_uuid(match_uuid)
         if match_instance:
             self.logger.debug(f"Active match found for UUID: {match_uuid}")
-            return match_instance.to_live_dto() # Исправлено: MatchDTO.from_match на match_instance.to_live_dto()
+            # Исправлено: MatchDTO.from_match на match_instance.to_live_dto()
+            return match_instance.to_live_dto()
         self.logger.debug(f"No active match found for UUID: {match_uuid}. Attempting to fetch from DB.")
-        # Попытка загрузить из БД, если не найден в активных (например, завершенный матч)
+        # Попытка загрузить из БД, если не найден в активных
+        # (например, завершенный матч)
         # Это предполагает, что в репозитории есть метод для получения матча из БД по UUID
         # и преобразования его в объект Match, а затем в MatchDTO.
         # Если такого метода нет или это не требуется для активных матчей, эту часть можно опустить

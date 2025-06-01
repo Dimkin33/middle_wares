@@ -250,3 +250,50 @@ class OrmMatchRepository:
             logger.warning(f"Match {match.match_uid} not found in _active_matches during save_finished_match.") # <--- Добавлено логирование
         
         return saved_match_dto
+
+    def get_completed_match_by_uuid(self, match_uuid: str) -> dict | None:
+        """Получить завершенный матч из базы данных по UUID в виде словаря."""
+        try:
+            with self._get_session() as session:
+                match_orm = session.query(MatchORM).filter_by(uuid=match_uuid).first()
+                if not match_orm:
+                    logger.debug(f"No completed match found with UUID {match_uuid}")
+                    return None
+
+                # Получаем имена игроков
+                player1_name = None
+                player2_name = None
+                winner_name = None
+
+                if match_orm.player1_id:
+                    player1 = session.get(PlayerORM, match_orm.player1_id)
+                    player1_name = player1.name if player1 else "Unknown Player 1"
+
+                if match_orm.player2_id:
+                    player2 = session.get(PlayerORM, match_orm.player2_id)
+                    player2_name = player2.name if player2 else "Unknown Player 2"
+
+                if match_orm.winner_id:
+                    winner = session.get(PlayerORM, match_orm.winner_id)
+                    winner_name = winner.name if winner else "Unknown Winner"
+
+                completed_match = {
+                    "match_uid": match_orm.uuid,
+                    "player_one_name": player1_name,
+                    "player_two_name": player2_name,
+                    "winner": winner_name,
+                    "final_score": match_orm.score_str or "Счет недоступен",
+                    "completed_at": (
+                        match_orm.created_at.isoformat() 
+                        if hasattr(match_orm, 'created_at') and match_orm.created_at 
+                        else ""
+                    ),
+                    "id": match_orm.id
+                }
+
+                logger.debug(f"Found completed match {match_uuid}: {completed_match}")
+                return completed_match
+
+        except Exception as e:
+            logger.error(f"Error retrieving completed match {match_uuid}: {e}")
+            return None

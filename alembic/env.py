@@ -26,7 +26,7 @@ if config.config_file_name is not None:
 # --- Мой код ---
 # Загрузка переменных окружения из .env файла
 # load_dotenv() # Заменено на load_dotenv(override=True)
-load_dotenv(override=True) # Добавлено
+load_dotenv() # ИЗМЕНЕНО: не перезаписывать существующие переменные окружения
 
 # Получение DATABASE_URL из переменных окружения
 database_url_from_env = os.getenv("DATABASE_URL")
