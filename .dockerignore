@@ -1,10 +1,46 @@
+# Git
 .git
 .gitignore
-README.md
-Dockerfile
-.dockerignore
+
+# Documentation (исключаем все кроме README.md)
+*.md
+!README.md
+
+# Python
 __pycache__
 *.pyc
+*.pyo
+*.pyd
+.Python
 .pytest_cache
 .coverage
+
+# Virtual environments
 .venv
+venv/
+.env
+
+# Rye
+.rye
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+tennis_app.log
+
+# Docker
+Dockerfile*
+docker-compose*
+compose.yml
+
+# Development files
+requirements.txt

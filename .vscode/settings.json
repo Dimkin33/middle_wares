@@ -1,6 +1,7 @@
 {
     "github.copilot.chat.localeOverride": "ru",
 
-    "explorer.excludeGitIgnore":true    
+    "explorer.excludeGitIgnore": true,
+    "makefile.configureOnOpen": false
 
 }

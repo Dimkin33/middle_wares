@@ -43,5 +43,5 @@ logging.getLogger('presentation').setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
     # Запуск приложения с помощью Waitress
-    serve(app, host='127.0.0.1', port=8080)
+    serve(app, host='0.0.0.0', port=8080)
 

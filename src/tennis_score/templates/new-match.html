@@ -18,10 +18,9 @@
         <div>
             <h1>Start new match</h1>
             <div class="new-match-image"></div>
-            <div class="form-container center">
-                <form method="post" action="/new-match">
+            <div class="form-container center">                <form method="post" action="/new-match">
                     {% if error %}
-                        <p style="color: red;">{{ error }}</p>
+                        <p class="form-error">{{ error }}</p>
                     {% endif %}
                     <label class="label-player" for="playerOne">Player one</label>
                     <input class="input-player" id="playerOne" name="playerOne" placeholder="Name" type="text" required title="Enter a name">
@@ -29,7 +28,7 @@
                     <label class="label-player" for="playerTwo">Player two</label>
                     <input class="input-player" id="playerTwo" name="playerTwo" placeholder="Name" type="text" required title="Enter a name">
                     
-                    <input class="form-button" type="submit" value="Start">
+                    <input class="btn btn-primary" type="submit" value="Start">
                 </form>
             </div>
         </div>

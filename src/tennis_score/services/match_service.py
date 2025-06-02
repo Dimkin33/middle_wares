@@ -96,3 +96,43 @@ class MatchService:
         return self.view_handler.prepare_match_view_data(
             match_dto
         )
+
+    def get_completed_match_by_uuid(self, match_uuid: str) -> dict | None:
+        """Получить завершенный матч из базы данных по UUID."""
+        try:
+            completed_match = self.repository.get_completed_match_by_uuid(match_uuid)
+            if completed_match:
+                self.logger.debug(f"Found completed match {match_uuid} in database")
+                return completed_match
+            return None
+        except Exception as e:
+            self.logger.error(f"Error retrieving completed match {match_uuid}: {e}")
+            return None
+
+    def prepare_completed_match_view_data(self, completed_match: dict) -> dict:
+        """Подготовить данные для отображения завершенного матча."""
+        try:
+            return {
+                "match_uuid": completed_match.get("match_uid", ""),
+                "player_one_name": completed_match.get("player_one_name", "N/A"),
+                "player_two_name": completed_match.get("player_two_name", "N/A"),
+                "winner": completed_match.get("winner", "N/A"),
+                "final_score": completed_match.get("final_score", "Данные недоступны"),
+                "completed_at": completed_match.get("completed_at", ""),
+                "info": f"Матч завершен. Победитель: {completed_match.get('winner', 'N/A')}",
+                "score": {
+                    "sets": [0, 0],  # Данные сетов можно извлечь из final_score если нужно
+                    "games": [0, 0],
+                    "points": ["0", "0"]
+                }
+            }
+        except Exception as e:
+            self.logger.error(f"Error preparing completed match view data: {e}")
+            return {
+                "match_uuid": completed_match.get("match_uid", "") if completed_match else "",
+                "player_one_name": "N/A",
+                "player_two_name": "N/A",
+                "winner": "N/A",
+                "error": "Ошибка при подготовке данных матча",
+                "score": {"sets": [0, 0], "games": [0, 0], "points": ["0", "0"]}
+            }

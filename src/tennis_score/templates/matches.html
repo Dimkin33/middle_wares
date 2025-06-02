@@ -17,19 +17,16 @@
 <main>
     <div class="container">
         <h1>Matches</h1>
-        <form method="GET" action="/matches" class="filter-form">
-            <div class="input-container">
+        <form method="GET" action="/matches" class="filter-form">            <div class="input-container">
                 <input class="input-filter" name="filter_query" placeholder="Filter by player name" type="text" value="{{ filter_query or '' }}" />
-                <a href="/matches" class="btn-reset">reset</a> {# Кнопка/ссылка для сброса фильтра #}
+                <a href="/matches" class="btn btn-secondary">reset</a>
             </div>
-        </form>
-
-        <table class="table-matches" style="table-layout:fixed; width:100%;">
+        </form>        <table class="table-matches table-matches-fixed">
             <tr>
-                <th style="width:22%">Player One</th>
-                <th style="width:22%">Player Two</th>
-                <th style="width:18%">Result</th>
-                <th style="width:38%">Winner</th>
+                <th class="col-player">Player One</th>
+                <th class="col-player">Player Two</th>
+                <th class="col-result">Result</th>
+                <th class="col-winner">Winner</th>
             </tr>
             {% for match in matches %}
             <tr>

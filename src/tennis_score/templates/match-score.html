@@ -12,7 +12,7 @@
 
     <script src="static/js/app.js"></script>
 </head>
-<body>
+<body {% if match_completed %}data-match-completed="true"{% endif %}>
 <header class="header">
     {% include 'nav.html' %}
 </header>
@@ -54,12 +54,12 @@
                         {% else %}
                             {{ score.points[0] }}
                         {% endif %}
-                    </td>
-                    <td class="table-text">
-                        <form method="post" action="/match-score">
+                    </td>                    <td class="table-text">
+                        <form method="post" action="/match-score" class="score-form">
                             <input type="hidden" name="player" value="player1">
-                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}"> <!-- Added match_uuid -->
-                            <button class="score-btn" type="submit" {% if winner %}disabled{% endif %}>Score</button>
+                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
+                            <button class="score-btn" type="submit" 
+                                    {% if winner or match_completed %}disabled{% endif %}>Score</button>
                         </form>
                     </td>
                 </tr>
@@ -73,12 +73,12 @@
                         {% else %}
                             {{ score.points[1] }}
                         {% endif %}
-                    </td>
-                    <td class="table-text">
-                        <form method="post" action="/match-score">
+                    </td>                    <td class="table-text">
+                        <form method="post" action="/match-score" class="score-form">
                             <input type="hidden" name="player" value="player2">
-                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}"> <!-- Added match_uuid -->
-                            <button class="score-btn" type="submit" {% if winner %}disabled{% endif %}>Score</button>
+                            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
+                            <button class="score-btn" type="submit" 
+                                    {% if winner or match_completed %}disabled{% endif %}>Score</button>
                         </form>
                     </td>
                 </tr>
@@ -88,11 +88,21 @@
             <div class="info-message">{{ info }}</div>
             {% endif %}
             {% endif %}
-        </section>
-        <form method="post" action="/reset-match" style="margin-top: 20px; text-align: center;">
-            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
-            <button type="submit" class="btn reset-match-btn" {% if not match_uuid %}disabled{% endif %}>Reset Match Score</button>
+        </section>        <form method="post" action="/reset-match" class="center">
+            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">            <button type="submit" class="btn reset-match-btn" 
+                    {% if not match_uuid or match_completed %}disabled{% endif %}>Reset Match Score</button>
         </form>
+        
+        {% if match_completed %}
+        <div class="action-buttons">
+            <a href="/new-match" class="btn btn-primary">
+                🎾 Начать новый матч
+            </a>
+            <a href="/matches" class="btn btn-secondary">
+                📊 Посмотреть все матчи
+            </a>
+        </div>
+        {% endif %}
     </div>
 </main>
 
