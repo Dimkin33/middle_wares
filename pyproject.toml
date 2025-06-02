@@ -1,7 +1,7 @@
 [project]
 name = "tennis_scoreboard"
 version = "0.1.0"
-description = "Add your description here"
+description = "Tennis Scoreboard Application"
 authors = [
     { name = "Dmitry", email = "dimkin3@gmail.com" }
 ]
