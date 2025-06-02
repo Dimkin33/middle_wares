@@ -54,8 +54,8 @@
 ### Быстрый запуск
 ```bash
 # Клонирование репозитория
-git clone <repository-url>
-cd middle_wares
+git clone https://github.com/Dimkin33/tennis_scoreboard.git
+cd tennis_scoreboard
 
 # Запуск всего стека
 docker-compose up -d
