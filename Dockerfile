@@ -1,22 +1,33 @@
-# Использовать официальный образ Python
-FROM python:3.13-slim-bookworm
+# Используем Python 3.13 slim
+FROM python:3.13-slim
 
-# Обновить пакеты и установить обновления безопасности
-RUN apt-get update && apt-get upgrade -y && apt-get clean
-
-# Установить рабочую директорию
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Скопировать файл зависимостей
-COPY requirements.txt requirements.txt
+# Устанавливаем системные зависимости
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Установить зависимости
-RUN pip install --no-cache-dir -r requirements.txt
+# Копируем файлы конфигурации проекта
+COPY pyproject.toml ./
+COPY README.md ./
 
-# Скопировать исходный код приложения
+# Копируем исходный код
+COPY src/ ./src/
+
+# Устанавливаем зависимости из pyproject.toml
+RUN pip install --no-cache-dir .
+
+# Копируем оставшиеся файлы приложения
 COPY . .
 
-# Указать команду для запуска приложения
-# Предполагается, что ваш основной файл - main.py и он запускает waitress на порту 8080
-# и слушает на всех интерфейсах (0.0.0.0)
-CMD ["waitress-serve", "--host=0.0.0.0", "--port=8080", "main:app"]
+# Устанавливаем переменные окружения
+ENV PYTHONPATH="/app"
+ENV FLASK_ENV=production
+
+# Открываем порт
+EXPOSE 8080
+
+# Запускаем приложение
+CMD ["python", "main.py"]

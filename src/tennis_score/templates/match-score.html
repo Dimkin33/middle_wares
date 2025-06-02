@@ -88,18 +88,17 @@
             <div class="info-message">{{ info }}</div>
             {% endif %}
             {% endif %}
-        </section>        <form method="post" action="/reset-match" style="margin-top: 20px; text-align: center;">
-            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">
-            <button type="submit" class="btn reset-match-btn" 
+        </section>        <form method="post" action="/reset-match" class="center">
+            <input type="hidden" name="match_uuid" value="{{ match_uuid }}">            <button type="submit" class="btn reset-match-btn" 
                     {% if not match_uuid or match_completed %}disabled{% endif %}>Reset Match Score</button>
         </form>
         
         {% if match_completed %}
-        <div style="text-align: center; margin-top: 20px;">
+        <div class="action-buttons">
             <a href="/new-match" class="btn btn-primary">
                 🎾 Начать новый матч
             </a>
-            <a href="/matches" class="btn btn-secondary" style="margin-left: 10px;">
+            <a href="/matches" class="btn btn-secondary">
                 📊 Посмотреть все матчи
             </a>
         </div>

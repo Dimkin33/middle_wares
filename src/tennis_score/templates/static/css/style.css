@@ -147,27 +147,115 @@ footer {
   margin: 0 auto;
 }
 
+/* =================== */
+/*   BUTTON SYSTEM     */
+/* =================== */
+/* Базовый класс для всех кнопок */
 .btn {
   border: none;
-  width: 100%;
   border-radius: var(--border-radius);
   font-size: 20px;
   cursor: pointer;
+  padding: 12px 24px;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s ease;
+  font-family: var(--font-main);
+  font-weight: 400;
+  box-sizing: border-box;
 }
 
-.view-results {
-  background-color: #e7e7e7;
-  padding: 9px 0;
-  margin-top: 10px; /* Добавлен верхний отступ */
-  margin-bottom: 10px; /* Добавлен нижний отступ */
+/* Для form кнопок (input type="submit") - полная ширина */
+input.btn {
+  width: 100%;
 }
 
-.start-match {
+.btn-full-width {
+  width: 100%;
+}
+
+/* Основные варианты кнопок */
+.btn-primary {
   background-color: var(--primary-color);
   color: #fff;
-  padding: 9px 0;
-  margin-top: 10px; /* Добавлен верхний отступ */
-  margin-bottom: 10px; /* Добавлен нижний отступ */
+}
+
+.btn-primary:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 167, 245, 0.3);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Кнопка сброса матча */
+.reset-match-btn {
+  background-color: #dc3545;
+  color: #fff;
+  margin-top: 20px;
+}
+
+.reset-match-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.reset-match-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Обновляем score-btn для единообразия */
+.score-btn {
+  border: none;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 15px;
+  padding: 12px 30px;
+  font-size: 20px;
+  cursor: pointer;
+  font-family: var(--font-main);
+  transition: all 0.3s ease;
+}
+
+.score-btn:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 167, 245, 0.3);
+}
+
+.score-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Контейнер для кнопок действий */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.action-buttons .btn {
+  min-width: 180px;
+  flex: 0 1 auto;
 }
 
 /* =================== */
@@ -211,24 +299,6 @@ footer {
 
 .input-player::placeholder {
   color: var(--primary-color);
-}
-
-.form-button,
-.btn-reset {
-  box-sizing: border-box; /* Added for consistent height calculation */
-  width: 100%; /* Changed from 100% to allow natural sizing in flex container */
-  display: block; /* Flex item behavior will override this, but good for fallback */
-  padding: 12px 10px;
-  font-size: 24px;
-  border: 1px solid #ccc;
-  background-color: var(--primary-color);
-  border-radius: var(--border-radius);
-  color: #fff;
-  text-decoration: none; /* Добавлено для удаления подчеркивания у ссылок с этим классом */
-  text-align: center; /* Добавлено для центрирования текста */
-  /* margin-top: 20px; */ /* Removed as parent .input-container uses gap for spacing */
-  height: 50px; /* Explicit height */
-  line-height: 24px; /* To vertically center text (height - padding*2 - border*2) */
 }
 
 /* =================== */
@@ -309,15 +379,6 @@ footer {
   display: inline-block; /* Позволяет форме лучше реагировать на vertical-align ячейки */
 }
 
-.score-btn {
-  font-size: 20px;
-  background-color: var(--primary-color);
-  color: #fff;
-  border-radius: 15px;
-  padding: 12px 30px;
-  /* margin-right: 30px; */ /* Removed for better centering via text-align on parent td */
-}
-
 /* =================== */
 /*    FINAL SCORE      */
 /* =================== */
@@ -358,17 +419,17 @@ footer {
 }
 
 .input-filter {
-  box-sizing: border-box; /* Added for consistent height calculation */
-  font-size: 24px; /* Match .btn-reset font-size */
-  border: 1px solid #ccc; /* Match .btn-reset border for consistent height */
-  width: 200%; /* Changed from 100% to allow natural sizing in flex container */
+  box-sizing: border-box;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  width: 200%;
   flex-grow: 1;
-  min-width: 0; /* Allow shrinking in flex container */
+  min-width: 0;
   border-radius: 15px;
   background-color: var(--light-gray);
-  padding: 12px 10px; /* Match .btn-reset padding and content alignment */
+  padding: 12px 10px;
   color: #000;
-  height: 50px; /* Explicit height to match .btn-reset */
+  height: 50px;
 }
 
 .table-matches {
@@ -376,6 +437,23 @@ footer {
   margin: 40px 0 20px;
   border-collapse: collapse;
   border: 1px solid #ccc;
+}
+
+.table-matches-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.col-player {
+  width: 22%;
+}
+
+.col-result {
+  width: 18%;
+}
+
+.col-winner {
+  width: 38%;
 }
 
 .table-matches th {
@@ -415,6 +493,25 @@ footer {
 
 .num-page.current {
   font-weight: bold;
+}
+
+/* =================== */
+/*   ERROR MESSAGES    */
+/* =================== */
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-size: var(--font-small);
+}
+
+.form-error {
+  color: #dc3545;
+  margin: 10px 0;
+  font-size: var(--font-small);
 }
 
 /* =================== */
@@ -517,4 +614,13 @@ footer {
     flex-direction: column;
     text-align: center;
   }
+}
+
+/* =================== */
+/*     HOMEPAGE        */
+/* =================== */
+.homepage-action-button {
+  display: block;
+  margin: 15px 0;
+  width: 100%;
 }

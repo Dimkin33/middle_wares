@@ -1,5 +1,5 @@
 [project]
-name = "middle-wares"
+name = "tennis_scoreboard"
 version = "0.1.0"
 description = "Add your description here"
 authors = [
@@ -12,7 +12,7 @@ dependencies = [
     "psycopg2-binary>=2.9.9",
     "alembic>=1.16.1",
     "python-dotenv>=1.1.0",
-    # Добавлено для поддержки PostgreSQL
+
 ]
 readme = "README.md"
 requires-python = ">= 3.13"
@@ -26,6 +26,21 @@ managed = true
 dev-dependencies = [
     "ruff>=0.11.9",
 ]
+
+[tool.rye.scripts]
+# Скрипты для запуска приложения
+start = "python main.py"
+
+
+# Скрипты для разработки
+lint = "ruff check"
+lint-fix = "ruff check --fix"
+format = "ruff format"
+check-all = ["lint", "format"]
+
+# Скрипты для базы данных
+db-migrate = "alembic upgrade head"
+db-create-migration = "alembic revision --autogenerate"
 
 [tool.hatch.metadata]
 allow-direct-references = true

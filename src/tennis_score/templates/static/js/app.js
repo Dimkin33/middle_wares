@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Отключаем кнопку и отмечаем, что форма отправлена
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Обновление...';
+            submitBtn.textContent = 'Upd...';
             formSubmitted = true;
 
             // Отключаем все остальные кнопки счета

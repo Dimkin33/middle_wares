@@ -1,11 +1,11 @@
 """Репозиторий для работы с матчами и игроками через ORM (PostgreSQL)."""
 import logging
 import math
-import os  # Добавлено для доступа к переменным окружения
+import os
 from contextlib import contextmanager
 
-from sqlalchemy import create_engine  # Удален or_
-from sqlalchemy.orm import sessionmaker  # Удален aliased
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from ..dto.match_dto import MatchDTO
 from ..model.match import Match
@@ -18,12 +18,17 @@ logging.basicConfig(level=logging.INFO)
 class OrmMatchRepository:
     """Репозиторий для работы с матчами и игроками через ORM (PostgreSQL)."""
     def __init__(self, db_url: str | None = None):
-        effective_db_url = db_url or os.getenv("DATABASE_URL", "postgresql+psycopg2://tennis_user:tennis_password@localhost:5432/tennis_db")
+        effective_db_url = db_url or os.getenv(
+            "DATABASE_URL", 
+            "postgresql+psycopg2://tennis_user:tennis_password@localhost:5432/tennis_db"
+        )
         if not effective_db_url:
-            raise ValueError("DATABASE_URL must be set as an environment variable or passed as an argument.")
+            raise ValueError(
+                "DATABASE_URL must be set as an environment variable or passed as an argument."
+            )
         self.engine = create_engine(effective_db_url, echo=False)
         self.Session = sessionmaker(bind=self.engine)
-        self._active_matches: dict[str, Match] = {} # Хранилище для активных матчей (не сохраненных в БД)
+        self._active_matches: dict[str, Match] = {}
 
     @contextmanager
     def _get_session(self):
@@ -39,7 +44,8 @@ class OrmMatchRepository:
         finally:
             session.close()
 
-    def add_match(self, uuid: str, player1_id: int, player2_id: int, winner_id: int | None, score: str) -> int:  # noqa: E501
+    def add_match(self, uuid: str, player1_id: int, player2_id: int, 
+                  winner_id: int | None, score: str) -> int:
         """Добавление матча в БД. Возвращает id созданного матча."""
         if not uuid or not isinstance(uuid, str):
             raise ValueError("UUID матча должен быть непустой строкой")
@@ -52,6 +58,7 @@ class OrmMatchRepository:
             for pid in [player1_id, player2_id, winner_id]:
                 if pid and not session.query(PlayerORM).get(pid):
                     raise ValueError(f"Игрок с ID {pid} не найден")
+            
             match = MatchORM(
                 uuid=uuid,
                 player1_id=player1_id,
@@ -60,7 +67,7 @@ class OrmMatchRepository:
                 score_str=score,
             )
             session.add(match)
-            session.flush()  # Получить id
+            session.flush()
             logger.info(f"Добавлен матч: {match}")
             return match.id
 
@@ -79,10 +86,11 @@ class OrmMatchRepository:
         self, page: int = 1, per_page: int = 10, filter_query: str | None = None
     ) -> tuple[list[MatchDTO], int]:
         """Получить список матчей (активных и из БД) с пагинацией и фильтрацией."""
-        logger.info(f"Listing matches. Current _active_matches: {self._active_matches}") # <--- Добавлено логирование
+        logger.info(f"Listing matches. Current _active_matches: {self._active_matches}")
+        
         # 1. Get All Active Match DTOs
         active_match_dtos = [match.to_live_dto() for match in self._active_matches.values()]
-        logger.info(f"Active match DTOs generated: {len(active_match_dtos)}") # <--- Добавлено логирование
+        logger.info(f"Active match DTOs generated: {len(active_match_dtos)}")
 
         # 2. Get All DB Match DTOs
         all_db_match_dtos = []
@@ -98,11 +106,11 @@ class OrmMatchRepository:
                         player_ids_to_fetch.add(m_orm.player2_id)
                     if m_orm.winner_id:
                         player_ids_to_fetch.add(m_orm.winner_id)
-                
+
                 player_map = {}
                 if player_ids_to_fetch:
                     players_orm = session.query(PlayerORM).filter(
-                        PlayerORM.id.in_(list(player_ids_to_fetch)) # type: ignore
+                        PlayerORM.id.in_(list(player_ids_to_fetch))
                     ).all()
                     player_map = {p.id: p.name for p in players_orm}
 
@@ -132,10 +140,10 @@ class OrmMatchRepository:
         # 6. Paginate Sorted DTOs
         total_matches = len(filtered_dtos)
 
-        if per_page > 0:
-            total_pages = math.ceil(total_matches / per_page)
-        else:
-            total_pages = 0 if total_matches == 0 else 1 
+        total_pages = (
+            math.ceil(total_matches / per_page) if per_page > 0 
+            else 0 if total_matches == 0 else 1
+        )
         
         total_pages = int(max(0, total_pages))
 
@@ -167,6 +175,7 @@ class OrmMatchRepository:
                     return None
                 player = session.get(PlayerORM, player_id)
                 return player.name if player else None
+            
             return MatchDTO(
                 id=match.id,
                 uuid=match.uuid,
@@ -186,7 +195,7 @@ class OrmMatchRepository:
         match = Match(player_one_name, player_two_name)
         self._active_matches[match.match_uid] = match
         logger.info(f"Создан активный матч: {match.match_uid}, {player_one_name} vs {player_two_name}")
-        logger.info(f"Current _active_matches after creation: {self._active_matches}") # <--- Добавлено логирование
+        logger.info(f"Current _active_matches after creation: {self._active_matches}")
         return match
 
     def get_active_match_by_uuid(self, uuid: str) -> Match | None:
@@ -229,7 +238,7 @@ class OrmMatchRepository:
                     f"Победитель не будет сохранен."
                 )
 
-        self.add_match( # Убрали присваивание match_db_id
+        self.add_match(
             uuid=match.match_uid,
             player1_id=player1_id,
             player2_id=player2_id,
@@ -240,14 +249,24 @@ class OrmMatchRepository:
         saved_match_dto = self.get_match_by_uuid_from_db(match.match_uid)
 
         if not saved_match_dto:
-            raise RuntimeError(f"Не удалось получить DTO для сохраненного матча {match.match_uid} из БД.")
+            raise RuntimeError(
+                f"Не удалось получить DTO для сохраненного матча {match.match_uid} из БД."
+            )
 
-        logger.info(f"Attempting to remove match {match.match_uid} from _active_matches. Current: {self._active_matches}") # <--- Добавлено логирование
+        logger.info(
+            f"Attempting to remove match {match.match_uid} from _active_matches. "
+            f"Current: {self._active_matches}"
+        )
         if match.match_uid in self._active_matches:
             del self._active_matches[match.match_uid]
-            logger.info(f"Активный матч {match.match_uid} удален из памяти после сохранения в БД. _active_matches: {self._active_matches}") # <--- Добавлено логирование
+            logger.info(
+                f"Активный матч {match.match_uid} удален из памяти после сохранения в БД. "
+                f"_active_matches: {self._active_matches}"
+            )
         else:
-            logger.warning(f"Match {match.match_uid} not found in _active_matches during save_finished_match.") # <--- Добавлено логирование
+            logger.warning(
+                f"Match {match.match_uid} not found in _active_matches during save_finished_match."
+            )
         
         return saved_match_dto
 

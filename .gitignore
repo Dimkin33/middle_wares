@@ -10,3 +10,21 @@ wheels/
 # venv
 .venv
 
+
+# Environment variables
+.env
+
+# Log files
+*.log
+tennis_app.log
+
+# IDE specific
+.idea/
+.vscode/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Pytest cache
+.pytest_cache/
